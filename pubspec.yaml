@@ -1,0 +1,32 @@
+name: emotion_app
+version: 1.0.0+1
+publish_to: none
+description: A new Flutter project.
+environment: 
+  sdk: '>=2.19.2 <3.0.0'
+
+dependencies: 
+  cupertino_icons: ^1.0.2
+  get: 4.6.5
+  fl_chart: 0.60.0
+  font_awesome_flutter: 10.4.0
+  flutter_easyloading: 3.0.5
+  modal_bottom_sheet: 3.0.0-pre
+  google_fonts: 4.0.3
+  shimmer: 2.0.0
+  uuid: 3.0.7
+  intl: 0.18.0
+  supabase_flutter: 1.4.0
+  flutter: 
+    sdk: flutter
+
+dev_dependencies: 
+  flutter_lints: ^2.0.0
+  flutter_test: 
+    sdk: flutter
+
+flutter: 
+  assets: 
+    - assets/images/
+  uses-material-design: true
+
