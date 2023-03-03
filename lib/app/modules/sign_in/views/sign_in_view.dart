@@ -57,9 +57,18 @@ class SignInView extends GetView<SignInController> {
                     ),
                   ],
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Container(),
+                Obx(
+                  () => CheckboxListTile(
+                    title: Text(
+                      "Remember me",
+                      style: MahasThemes.blackNormal,
+                    ),
+                    value: controller.isRemember.value,
+                    onChanged: (_) => controller.isRemember.toggle(),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    activeColor: MahasColors.primary,
+                    contentPadding: const EdgeInsets.all(0),
+                  ),
                 ),
                 SizedBox(
                   width: Get.width,
@@ -72,7 +81,7 @@ class SignInView extends GetView<SignInController> {
                   ),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 InkWell(
                   onTap: () {

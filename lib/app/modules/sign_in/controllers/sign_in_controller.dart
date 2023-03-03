@@ -1,6 +1,6 @@
-import 'package:emotion_app/app/modules/home/controllers/home_controller.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../mahas/components/inputs/input_text_component.dart';
@@ -8,7 +8,9 @@ import '../../../mahas/services/helper.dart';
 import '../../../routes/app_pages.dart';
 
 class SignInController extends GetxController {
-  RxString version = "1.0.0".obs;
+  final RxString version = "1.0.0".obs;
+  final RxBool isRemember = false.obs;
+
   final InputTextController emailCon =
       InputTextController(type: InputTextType.email);
   final InputTextController passwordCon =
@@ -16,8 +18,18 @@ class SignInController extends GetxController {
 
   SupabaseClient client = Supabase.instance.client;
   late List<Map<String, dynamic>> response;
+  final box = GetStorage();
 
-  final HomeController homeC = Get.find();
+  @override
+  void onInit() async {
+    var read = await box.read("rememberme");
+    if (read != null) {
+      emailCon.value = read["email"];
+      passwordCon.value = read["pass"];
+      isRemember.value = true;
+    }
+    super.onInit();
+  }
 
   Future signInOnTap() async {
     if (!emailCon.isValid) return false;
@@ -41,7 +53,13 @@ class SignInController extends GetxController {
 
     EasyLoading.dismiss();
     if (client.auth.currentUser!.emailConfirmedAt != null) {
-      // await homeC.getUser();
+      if (box.read('rememberme') != null) {
+        box.remove('rememberme');
+      }
+      if (isRemember.isTrue) {
+        box.write(
+            'rememberme', {'email': emailCon.value, 'pass': passwordCon.value});
+      }
       Get.offNamed(Routes.HOME);
     } else {
       Helper.dialogWarning(

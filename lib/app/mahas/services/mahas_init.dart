@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../routes/app_pages.dart';
@@ -13,6 +14,8 @@ class MahasInit {
       anonKey:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkYWF6eGlxeXpnYmNrYnV5Ym9vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzcwMzk2NDUsImV4cCI6MTk5MjYxNTY0NX0.KYv4__lGBBdxbNo-th99jf-T69pgT39KqreqHoarExY",
     );
+
+    await GetStorage.init();
   }
 
   static Future checkUser() async {

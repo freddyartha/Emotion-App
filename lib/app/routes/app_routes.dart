@@ -9,6 +9,7 @@ abstract class Routes {
   static const SIGN_IN = _Paths.SIGN_IN;
   static const SIGN_UP = _Paths.SIGN_UP;
   static const EMOTION_DETAIL = _Paths.EMOTION_DETAIL;
+  static const EMOTION_DETAIL_SETUP = _Paths.EMOTION_DETAIL_SETUP;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const SIGN_IN = '/sign-in';
   static const SIGN_UP = '/sign-up';
   static const EMOTION_DETAIL = '/emotion-detail';
+  static const EMOTION_DETAIL_SETUP = '/emotion-detail-setup';
 }

@@ -20,6 +20,7 @@ class HomeView extends GetView<HomeController> {
             color: MahasColors.primary,
             height: Get.height,
             child: SingleChildScrollView(
+              controller: ScrollController(initialScrollOffset: 0.5),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -82,7 +83,9 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            controller.signOut();
+                          },
                           child: const SizedBox(
                             width: 60,
                             height: 60,
@@ -113,14 +116,14 @@ class HomeView extends GetView<HomeController> {
                           child: Scrollbar(
                             thumbVisibility: true,
                             controller:
-                                ScrollController(initialScrollOffset: 0.0),
+                                ScrollController(initialScrollOffset: 0.5),
                             radius: const Radius.circular(10),
                             child: ListView.separated(
                                 shrinkWrap: true,
                                 physics: const ScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 controller:
-                                    ScrollController(initialScrollOffset: 0.0),
+                                    ScrollController(initialScrollOffset: 0.5),
                                 itemBuilder: (context, index) {
                                   return Obx(
                                     () => controller.listEmotion.isNotEmpty

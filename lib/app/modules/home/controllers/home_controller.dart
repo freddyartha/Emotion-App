@@ -37,7 +37,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> onRefresh() async {
-    // await getUser();
+    await getUser();
   }
 
   Future getEmotion() async {
