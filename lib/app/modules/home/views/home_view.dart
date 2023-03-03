@@ -26,76 +26,82 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Obx(
-                          () => controller.users.isNotEmpty
-                              ? SizedBox(
-                                  width: 60,
-                                  height: 60,
-                                  child: ClipOval(
-                                    child: controller.users.first.profilePic !=
-                                            null
-                                        ? Image.network(
-                                            controller.users.first.profilePic!,
-                                          )
-                                        : Image.asset(
-                                            "assets/images/no_image.png",
-                                          ),
-                                  ),
-                                )
-                              : SizedBox(
-                                  width: 60,
-                                  height: 60,
-                                  child: ClipOval(
-                                    child: Image.asset(
-                                      "assets/images/no_image.png",
+                    child: RefreshIndicator(
+                      onRefresh: () => controller.onRefresh(),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Obx(
+                            () => controller.users.isNotEmpty
+                                ? SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: ClipOval(
+                                      child:
+                                          controller.users.first.profilePic !=
+                                                  null
+                                              ? Image.network(
+                                                  controller
+                                                      .users.first.profilePic!,
+                                                )
+                                              : Image.asset(
+                                                  "assets/images/no_image.png",
+                                                ),
+                                    ),
+                                  )
+                                : SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: ClipOval(
+                                      child: Image.asset(
+                                        "assets/images/no_image.png",
+                                      ),
                                     ),
                                   ),
-                                ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Welcome!",
-                                  style: MahasThemes.whiteNormal,
-                                ),
-                                Obx(
-                                  () => controller.users.isNotEmpty
-                                      ? Text(
-                                          controller.users.first.name!,
-                                          style: MahasThemes.whiteH2,
-                                          overflow: TextOverflow.visible,
-                                          maxLines: 2,
-                                        )
-                                      : const ShimmerComponent(
-                                          count: 1,
-                                        ),
-                                ),
-                              ],
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Welcome!",
+                                    style: MahasThemes.whiteNormal,
+                                  ),
+                                  Obx(
+                                    () => controller.users.isNotEmpty
+                                        ? Text(
+                                            controller.users.first.name!,
+                                            style: MahasThemes.whiteH2,
+                                            overflow: TextOverflow.visible,
+                                            maxLines: 2,
+                                          )
+                                        : const ShimmerComponent(
+                                            count: 1,
+                                          ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            controller.signOut();
-                          },
-                          child: const SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: Icon(
-                              Icons.settings_outlined,
-                              color: MahasColors.light,
+                          InkWell(
+                            onTap: () {
+                              controller.goToSettingsList();
+                            },
+                            child: const SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: Icon(
+                                Icons.settings_outlined,
+                                color: MahasColors.light,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   Container(

@@ -45,23 +45,8 @@ class HomeController extends GetxController {
     listEmotion.assignAll(addEmotion);
   }
 
-  Future signOut() async {
-    if (EasyLoading.isShow) return;
-    await EasyLoading.show();
-    try {
-      await client.auth.signOut();
-    } on PostgrestException catch (e) {
-      EasyLoading.dismiss();
-      Helper.dialogWarning(
-        e.toString(),
-      );
-    } catch (e) {
-      Helper.dialogWarning(
-        e.toString(),
-      );
-    }
-    Get.offAllNamed(Routes.SIGN_IN);
-    EasyLoading.dismiss();
+  Future goToSettingsList() async {
+    Get.toNamed(Routes.SETTINGS_LIST);
   }
 
   Future getUser() async {
