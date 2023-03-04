@@ -15,7 +15,7 @@ class OneEmotionListView extends GetView<OneEmotionListController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add an Emotion",
+          "Emotion",
           style: MahasThemes.whiteH2,
         ),
         centerTitle: true,
@@ -67,15 +67,19 @@ class OneEmotionListView extends GetView<OneEmotionListController> {
                       return ListTile(
                         onTap: () =>
                             controller.toOneEmotionDetailSetup(emotion.id!),
-                        horizontalTitleGap: 5,
+                        horizontalTitleGap: 10,
                         leading: emotion.image == null
                             ? const Icon(FontAwesomeIcons.faceSmile)
-                            // : Image.memory(
-                            //     emotion.image! as Uint8List,
-                            //     height: 40,
-                            //     width: 40,
-                            //   ),
-                            : Image.asset('assets/images/happy.png'),
+                            : SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: ClipOval(
+                                  child: Image.memory(
+                                    controller.convertImage(emotion.image!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                         title: Text(emotion.description!),
                       );
                     },

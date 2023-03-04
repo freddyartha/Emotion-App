@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:emotion_app/app/data/models/one_emotion_model.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -57,5 +60,11 @@ class OneEmotionListController extends GetxController {
       );
     }
     EasyLoading.dismiss();
+  }
+
+  Uint8List convertImage(String imageValue) {
+    List<int> byte = jsonDecode(imageValue).cast<int>();
+    Uint8List ul = Uint8List.fromList(byte);
+    return ul;
   }
 }

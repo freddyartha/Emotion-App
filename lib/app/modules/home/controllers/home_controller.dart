@@ -1,8 +1,11 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:emotion_app/app/data/models/one_emotion_model.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../data/models/emotion_model.dart';
 import '../../../data/models/users_model.dart';
 import '../../../mahas/services/helper.dart';
 import '../../../routes/app_pages.dart';
@@ -10,39 +13,18 @@ import '../../../routes/app_pages.dart';
 class HomeController extends GetxController {
   SupabaseClient client = Supabase.instance.client;
   RxList<Users> users = <Users>[].obs;
-  RxList<EmotionModel> listEmotion = <EmotionModel>[].obs;
-  final List<EmotionModel> addEmotion = [
-    EmotionModel("assets/images/blessed.png", "Blessed"),
-    EmotionModel("assets/images/cool.png", "Cool"),
-    EmotionModel("assets/images/happy.png", "Happy"),
-    EmotionModel("assets/images/ill.png", "Sick"),
-    EmotionModel("assets/images/in_love.png", "In Love"),
-    EmotionModel("assets/images/mad.png", "Mad"),
-    EmotionModel("assets/images/overwhelmed.png", "Proud"),
-    EmotionModel("assets/images/playful.png", "Playful"),
-    EmotionModel("assets/images/sad.png", "Sad"),
-    EmotionModel("assets/images/shock.png", "Shock"),
-  ];
-
-  @override
-  void onInit() async {
-    await getEmotion();
-    super.onInit();
-  }
+  RxList<OneemotionModel> listEmotion = <OneemotionModel>[].obs;
 
   @override
   void onReady() async {
     await getUser();
+    await getOneEmotion();
     super.onReady();
   }
 
   Future<void> onRefresh() async {
     await getUser();
-  }
-
-  Future getEmotion() async {
-    listEmotion.clear();
-    listEmotion.assignAll(addEmotion);
+    await getOneEmotion();
   }
 
   Future goToSettingsList() async {
@@ -74,7 +56,41 @@ class HomeController extends GetxController {
     return users;
   }
 
-  void toEmotionDetail(String emotion) {
-    Get.toNamed(Routes.EMOTION_DETAIL, parameters: {"emotion": emotion});
+  Future getOneEmotion() async {
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
+    await EasyLoading.show();
+
+    try {
+      var response = await client.from("one_emotion").select().match(
+        {
+          "user_uid": client.auth.currentUser!.id,
+        },
+      );
+      List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
+      listEmotion.assignAll(datas);
+    } on PostgrestException catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    } catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    }
+    EasyLoading.dismiss();
+    return users;
+  }
+
+  void toEmotionDetail(String emotion, String id) {
+    Get.toNamed(Routes.EMOTION_DETAIL,
+        parameters: {"emotion": emotion, "id": id});
+  }
+
+  Uint8List stringToImage(String imageValue) {
+    List<int> byte = jsonDecode(imageValue).cast<int>();
+    Uint8List ul = Uint8List.fromList(byte);
+    return ul;
   }
 }

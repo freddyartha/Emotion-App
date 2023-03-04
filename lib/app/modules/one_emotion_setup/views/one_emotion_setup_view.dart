@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:emotion_app/app/mahas/components/mahas_themes.dart';
+import 'package:emotion_app/app/mahas/mahas_colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -16,7 +17,7 @@ class OneEmotionSetupView extends GetView<OneEmotionSetupController> {
       onWillPop: () => controller.backOnPressed(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Add an Emotion'),
+          title: const Text('Emotion'),
           centerTitle: true,
           actions: [
             Obx(
@@ -69,67 +70,124 @@ class OneEmotionSetupView extends GetView<OneEmotionSetupController> {
                   height: 10,
                 ),
                 GetBuilder<OneEmotionSetupController>(
-                  builder: (c) => Row(
-                    children: [
-                      Column(
-                        children: [
-                          c.image == null
-                              ? Text(
-                                  "No Image Yet",
-                                  style: MahasThemes.mutedNormal,
-                                )
-                              : SizedBox(
-                                  width: 80,
-                                  height: 80,
-                                  child: ClipOval(
-                                    child: Image.file(
-                                      File(c.image!.path),
-                                      fit: BoxFit.cover,
+                  builder: (c) => c.detailId.value != "" && c.editable.isFalse
+                      ? Container(
+                          width: Get.width,
+                          height: Get.width * 0.8,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MahasColors.grey,
+                            borderRadius:
+                                BorderRadius.circular(MahasThemes.borderRadius),
+                          ),
+                          child: c.getImage == null
+                              ? const Center(
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: CircularProgressIndicator(
+                                      color: MahasColors.primary,
                                     ),
                                   ),
-                                ),
-                          TextButton(
-                            onPressed: () {
-                              c.clearImage();
-                            },
-                            child: Text(
-                              "Clear image",
-                              style: MahasThemes.linkNormal,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Expanded(
-                        child: SizedBox(),
-                      ),
-                      SizedBox(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                                )
+                              : c.image != null
+                                  ? Image.file(
+                                      File(c.image!.path),
+                                    )
+                                  : Image.memory(c.getImage!),
+                        )
+                      : Column(
                           children: [
-                            TextButton(
-                              onPressed: () {
-                                c.fromGallery();
-                              },
-                              child: Text(
-                                "From Gallery",
-                                style: MahasThemes.linkNormal,
+                            c.getImage == null
+                                ? Text(
+                                    "No Image Yet",
+                                    style: MahasThemes.mutedNormal,
+                                  )
+                                : Container(
+                                    width: Get.width,
+                                    height: Get.width * 0.8,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: MahasColors.grey,
+                                      borderRadius: BorderRadius.circular(
+                                          MahasThemes.borderRadius),
+                                    ),
+                                    child: c.image != null
+                                        ? Image.file(
+                                            File(c.image!.path),
+                                          )
+                                        : Image.memory(c.getImage!),
+                                  ),
+                            SizedBox(
+                              width: Get.width,
+                              height: 35,
+                              child: TextButton(
+                                onPressed: () {
+                                  c.clearImage();
+                                },
+                                child: Text(
+                                  "Clear image",
+                                  style: MahasThemes.linkNormal,
+                                ),
                               ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                c.fromCamera();
-                              },
-                              child: Text(
-                                "From Camera",
-                                style: MahasThemes.linkNormal,
+                            SizedBox(
+                              width: Get.width,
+                              height: 35,
+                              child: TextButton(
+                                onPressed: () {
+                                  c.fromGallery();
+                                },
+                                child: Text(
+                                  "From Gallery",
+                                  style: MahasThemes.linkNormal,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: Get.width,
+                              height: 35,
+                              child: TextButton(
+                                onPressed: () {
+                                  c.fromCamera();
+                                },
+                                child: Text(
+                                  "From Camera",
+                                  style: MahasThemes.linkNormal,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  width: Get.width,
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      "It is recommended to download your Emotion Image from",
+                      style: MahasThemes.mutedNormal,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
+                ),
+                SizedBox(
+                  width: Get.width,
+                  height: 35,
+                  child: TextButton(
+                    onPressed: () => controller.linkOnPressed(),
+                    child: Text(
+                      "https://emojipedia.org/",
+                      style: MahasThemes.linkNormal,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
                 ),
                 Obx(
                   () => Visibility(

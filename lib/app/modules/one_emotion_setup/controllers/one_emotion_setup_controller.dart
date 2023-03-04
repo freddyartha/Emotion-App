@@ -1,12 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:emotion_app/app/data/models/one_emotion_model.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/services/helper.dart';
@@ -16,6 +17,7 @@ class OneEmotionSetupController extends GetxController {
 
   final ImagePicker picker = ImagePicker();
   XFile? image;
+  Uint8List? getImage;
 
   RxBool editable = true.obs;
   RxInt itemID = 0.obs;
@@ -53,7 +55,6 @@ class OneEmotionSetupController extends GetxController {
     Helper.dialogQuestionWithAction(
       message: "Are you sure want to go back?",
       confirmAction: () async {
-        // await homeC.getNotes();
         Get.back(closeOverlays: true);
       },
     );
@@ -72,6 +73,8 @@ class OneEmotionSetupController extends GetxController {
       );
       var dataGet = OneemotionModel.fromDynamicList(resGet);
       descCon.value = dataGet.first.description;
+      getImage = stringToImage(dataGet.first.image!);
+      update();
       itemID.value = dataGet.first.id!;
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());
@@ -84,6 +87,7 @@ class OneEmotionSetupController extends GetxController {
 
   Future submitOnPressed(bool edit) async {
     if (!descCon.isValid) return false;
+    if (image == null) return false;
 
     if (EasyLoading.isShow) return false;
     EasyLoading.show();
@@ -92,7 +96,7 @@ class OneEmotionSetupController extends GetxController {
       var res = await client.from("one_emotion").update(
         {
           "description": descCon.value,
-          "image": image != null ? await convertImage(image!) : "",
+          "image": await convertImage(image!),
           "updated_at": DateTime.now().toIso8601String()
         },
       ).match(
@@ -109,7 +113,7 @@ class OneEmotionSetupController extends GetxController {
           {
             "user_uid": client.auth.currentUser!.id,
             "description": descCon.value,
-            "image": image != null ? await convertImage(image!) : "",
+            "image": await convertImage(image!),
             "created_at": DateTime.now().toIso8601String(),
           },
         ).select();
@@ -163,5 +167,18 @@ class OneEmotionSetupController extends GetxController {
     final path = imageData.path;
     Uint8List bytes = await File(path).readAsBytes();
     return bytes;
+  }
+
+  Uint8List stringToImage(String imageValue) {
+    List<int> byte = jsonDecode(imageValue).cast<int>();
+    Uint8List ul = Uint8List.fromList(byte);
+    return ul;
+  }
+
+  Future<void> linkOnPressed() async {
+    var url = Uri.parse('https://emojipedia.org/');
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
