@@ -1,4 +1,5 @@
 import 'package:emotion_app/app/mahas/components/mahas_themes.dart';
+import 'package:emotion_app/app/mahas/components/others/empty_component.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -38,16 +39,13 @@ class HomeView extends GetView<HomeController> {
                                     width: 60,
                                     height: 60,
                                     child: ClipOval(
-                                      child:
-                                          controller.users.first.profilePic !=
-                                                  null
-                                              ? Image.network(
-                                                  controller
-                                                      .users.first.profilePic!,
-                                                )
-                                              : Image.asset(
-                                                  "assets/images/no_image.png",
-                                                ),
+                                      child: controller
+                                                  .users.first.profilePic !=
+                                              null
+                                          ? Image.memory(controller.getImage!)
+                                          : Image.asset(
+                                              "assets/images/no_image.png",
+                                            ),
                                     ),
                                   )
                                 : SizedBox(
@@ -135,53 +133,70 @@ class HomeView extends GetView<HomeController> {
                                       initialScrollOffset: 0.5),
                                   itemBuilder: (context, index) {
                                     return Obx(
-                                      () => controller.listEmotion.isNotEmpty
-                                          ? InkWell(
-                                              onTap: () =>
-                                                  controller.toEmotionDetail(
-                                                      controller
-                                                          .listEmotion[index]
-                                                          .description!,
-                                                      controller
-                                                          .listEmotion[index]
-                                                          .id!
-                                                          .toString()),
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                width: 80,
-                                                height: 100,
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 70,
-                                                      height: 70,
-                                                      child: ClipOval(
-                                                        child: Image.memory(
-                                                          controller.stringToImage(
-                                                              controller
-                                                                  .listEmotion[
-                                                                      index]
-                                                                  .image!),
-                                                          fit: BoxFit.cover,
+                                      () => controller.loadData.isTrue
+                                          ? controller.listEmotion.isNotEmpty
+                                              ? InkWell(
+                                                  onTap: () => controller
+                                                      .toEmotionDetail(
+                                                          controller
+                                                              .listEmotion[
+                                                                  index]
+                                                              .description!,
+                                                          controller
+                                                              .listEmotion[
+                                                                  index]
+                                                              .id!
+                                                              .toString()),
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(5),
+                                                    width: 80,
+                                                    height: 100,
+                                                    child: Column(
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 70,
+                                                          height: 70,
+                                                          child: ClipOval(
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5),
+                                                              child:
+                                                                  Image.memory(
+                                                                controller.stringToImage(
+                                                                    controller
+                                                                        .listEmotion[
+                                                                            index]
+                                                                        .image!),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        FittedBox(
+                                                          fit: BoxFit.fitWidth,
+                                                          child: Text(
+                                                            controller
+                                                                .listEmotion[
+                                                                    index]
+                                                                .description!,
+                                                            style: MahasThemes
+                                                                .whiteNormal,
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
-                                                    const SizedBox(height: 5),
-                                                    FittedBox(
-                                                      fit: BoxFit.fitWidth,
-                                                      child: Text(
-                                                        controller
-                                                            .listEmotion[index]
-                                                            .description!,
-                                                        style: MahasThemes
-                                                            .whiteNormal,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            )
+                                                  ),
+                                                )
+                                              : SizedBox(
+                                                  height: 70,
+                                                  width: Get.width,
+                                                  child: const EmptyComponent(),
+                                                )
                                           : const Center(
                                               child: ShimmerComponent(
                                                 count: 1,

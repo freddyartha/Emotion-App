@@ -14,15 +14,26 @@ class HomeController extends GetxController {
   SupabaseClient client = Supabase.instance.client;
   RxList<Users> users = <Users>[].obs;
   RxList<OneemotionModel> listEmotion = <OneemotionModel>[].obs;
+  RxBool loadData = false.obs;
+  Uint8List? getImage;
+
+  // @override
+  // void onInit() async {
+  //   // await getUser();
+  //   await getOneEmotion();
+  //   super.onInit();
+  // }
 
   @override
   void onReady() async {
+    loadData.value = false;
     await getUser();
     await getOneEmotion();
     super.onReady();
   }
 
   Future<void> onRefresh() async {
+    loadData.value = false;
     await getUser();
     await getOneEmotion();
   }
@@ -43,6 +54,7 @@ class HomeController extends GetxController {
       );
       List<Users> datas = Users.fromDynamicList(response);
       users.assignAll(datas);
+      getImage = stringToImage(users.first.profilePic!);
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
         e.toString(),
@@ -70,6 +82,7 @@ class HomeController extends GetxController {
       );
       List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
       listEmotion.assignAll(datas);
+      loadData.toggle();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
         e.toString(),

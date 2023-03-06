@@ -66,99 +66,161 @@ class OneEmotionSetupView extends GetView<OneEmotionSetupController> {
                   "Emotion Image",
                   style: MahasThemes.mutedNormal,
                 ),
+                Visibility(
+                  visible: controller.imageRequired.value,
+                  child: const Text(
+                    "    The field is required",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: MahasColors.red,
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 10,
                 ),
                 GetBuilder<OneEmotionSetupController>(
-                  builder: (c) => c.detailId.value != "" && c.editable.isFalse
-                      ? Container(
-                          width: Get.width,
-                          height: Get.width * 0.8,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: MahasColors.grey,
-                            borderRadius:
-                                BorderRadius.circular(MahasThemes.borderRadius),
-                          ),
-                          child: c.getImage == null
-                              ? const Center(
-                                  child: SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: CircularProgressIndicator(
-                                      color: MahasColors.primary,
-                                    ),
+                  builder: (c) => Column(
+                    children: [
+                      c.detailId.value != ""
+                          ? c.editable.isFalse
+                              ? Container(
+                                  width: Get.width,
+                                  height: Get.width * 0.8,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: MahasColors.grey,
+                                    borderRadius: BorderRadius.circular(
+                                        MahasThemes.borderRadius),
                                   ),
+                                  child: c.getImage == null
+                                      ? const Center(
+                                          child: SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: CircularProgressIndicator(
+                                              color: MahasColors.primary,
+                                            ),
+                                          ),
+                                        )
+                                      : Image.memory(c.getImage!),
                                 )
-                              : c.image != null
-                                  ? Image.file(
-                                      File(c.image!.path),
-                                    )
-                                  : Image.memory(c.getImage!),
-                        )
-                      : Column(
-                          children: [
-                            c.getImage == null
-                                ? Text(
-                                    "No Image Yet",
-                                    style: MahasThemes.mutedNormal,
-                                  )
-                                : Container(
-                                    width: Get.width,
-                                    height: Get.width * 0.8,
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: MahasColors.grey,
-                                      borderRadius: BorderRadius.circular(
-                                          MahasThemes.borderRadius),
-                                    ),
-                                    child: c.image != null
-                                        ? Image.file(
-                                            File(c.image!.path),
-                                          )
-                                        : Image.memory(c.getImage!),
+                              : Container(
+                                  width: Get.width,
+                                  height: Get.width * 0.8,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: MahasColors.grey,
+                                    borderRadius: BorderRadius.circular(
+                                        MahasThemes.borderRadius),
                                   ),
-                            SizedBox(
+                                  child: c.getImage == null && c.image == null
+                                      ? const Center(
+                                          child: SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: CircularProgressIndicator(
+                                              color: MahasColors.primary,
+                                            ),
+                                          ),
+                                        )
+                                      : c.getImage != null && c.image == null
+                                          ? Image.memory(c.getImage!)
+                                          : c.getImage != null &&
+                                                  c.image != null
+                                              ? Image.file(
+                                                  File(c.image!.path),
+                                                )
+                                              : Center(
+                                                  child: Container(
+                                                    height: 100,
+                                                    width: 100,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: AssetImage(
+                                                          "assets/images/no_image_no_caption.png",
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                )
+                          : Container(
                               width: Get.width,
-                              height: 35,
-                              child: TextButton(
-                                onPressed: () {
-                                  c.clearImage();
-                                },
-                                child: Text(
-                                  "Clear image",
-                                  style: MahasThemes.linkNormal,
-                                ),
+                              height: Get.width * 0.8,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: MahasColors.grey,
+                                borderRadius: BorderRadius.circular(
+                                    MahasThemes.borderRadius),
                               ),
+                              child: c.image == null
+                                  ? Center(
+                                      child: Container(
+                                        height: 100,
+                                        width: 100,
+                                        decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              "assets/images/no_image_no_caption.png",
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Image.file(
+                                      File(c.image!.path),
+                                    ),
                             ),
-                            SizedBox(
-                              width: Get.width,
-                              height: 35,
-                              child: TextButton(
-                                onPressed: () {
-                                  c.fromGallery();
-                                },
-                                child: Text(
-                                  "From Gallery",
-                                  style: MahasThemes.linkNormal,
+                      c.editable.isTrue
+                          ? Column(
+                              children: [
+                                SizedBox(
+                                  width: Get.width,
+                                  height: 35,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      c.clearImage();
+                                    },
+                                    child: Text(
+                                      "Clear image",
+                                      style: MahasThemes.linkNormal,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: Get.width,
-                              height: 35,
-                              child: TextButton(
-                                onPressed: () {
-                                  c.fromCamera();
-                                },
-                                child: Text(
-                                  "From Camera",
-                                  style: MahasThemes.linkNormal,
+                                SizedBox(
+                                  width: Get.width,
+                                  height: 35,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      c.fromGallery();
+                                    },
+                                    child: Text(
+                                      "From Gallery",
+                                      style: MahasThemes.linkNormal,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
+                                SizedBox(
+                                  width: Get.width,
+                                  height: 35,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      c.fromCamera();
+                                    },
+                                    child: Text(
+                                      "From Camera",
+                                      style: MahasThemes.linkNormal,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const SizedBox()
+                    ],
+                  ),
                 ),
                 const SizedBox(
                   height: 20,

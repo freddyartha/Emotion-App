@@ -11,10 +11,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/services/helper.dart';
+import '../../one_emotion_list/controllers/one_emotion_list_controller.dart';
 
 class OneEmotionSetupController extends GetxController {
   final InputTextController descCon = InputTextController();
 
+  final oneEmotionC = Get.find<OneEmotionListController>();
   final ImagePicker picker = ImagePicker();
   XFile? image;
   Uint8List? getImage;
@@ -23,16 +25,17 @@ class OneEmotionSetupController extends GetxController {
   RxInt itemID = 0.obs;
   RxBool isEdit = false.obs;
   RxString detailId = "".obs;
+  RxBool imageRequired = false.obs;
 
   late String emotionCon;
 
   SupabaseClient client = Supabase.instance.client;
 
   @override
-  void onInit() {
+  void onInit() async {
     detailId.value = Get.parameters['id']!;
     if (detailId.value != "") {
-      getData(int.parse(detailId.value));
+      await getData(int.parse(detailId.value));
     }
     super.onInit();
   }
@@ -55,6 +58,7 @@ class OneEmotionSetupController extends GetxController {
     Helper.dialogQuestionWithAction(
       message: "Are you sure want to go back?",
       confirmAction: () async {
+        await oneEmotionC.getOneEmotionList();
         Get.back(closeOverlays: true);
       },
     );
@@ -87,7 +91,10 @@ class OneEmotionSetupController extends GetxController {
 
   Future submitOnPressed(bool edit) async {
     if (!descCon.isValid) return false;
-    if (image == null) return false;
+    if (image == null) {
+      imageRequired.toggle();
+      return false;
+    }
 
     if (EasyLoading.isShow) return false;
     EasyLoading.show();
@@ -106,6 +113,7 @@ class OneEmotionSetupController extends GetxController {
       isEdit.value = false;
       var dataPost = OneemotionModel.fromDynamicList(res);
       await getData(dataPost.first.id!);
+
       EasyLoading.dismiss();
     } else {
       try {
@@ -126,6 +134,7 @@ class OneEmotionSetupController extends GetxController {
         Helper.dialogWarning(e.toString());
       }
 
+      imageRequired.toggle();
       EasyLoading.dismiss();
       Helper.dialogSuccess("Created Successfully!");
     }
@@ -136,7 +145,7 @@ class OneEmotionSetupController extends GetxController {
     EasyLoading.show();
     Get.back(result: true);
     try {
-      await client.from("notes").delete().match({"id": id});
+      await client.from("one_emotion").delete().match({"id": id});
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());
     } catch (e) {
@@ -161,6 +170,7 @@ class OneEmotionSetupController extends GetxController {
     if (image != null) {
       image = null;
     }
+    update();
   }
 
   Future<Uint8List> convertImage(XFile imageData) async {

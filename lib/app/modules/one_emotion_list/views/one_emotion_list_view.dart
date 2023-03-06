@@ -71,12 +71,15 @@ class OneEmotionListView extends GetView<OneEmotionListController> {
                         leading: emotion.image == null
                             ? const Icon(FontAwesomeIcons.faceSmile)
                             : SizedBox(
-                                width: 40,
-                                height: 40,
+                                width: 50,
+                                height: 50,
                                 child: ClipOval(
-                                  child: Image.memory(
-                                    controller.convertImage(emotion.image!),
-                                    fit: BoxFit.cover,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Image.memory(
+                                      controller.convertImage(emotion.image!),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
