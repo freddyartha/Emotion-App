@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:emotion_app/app/data/models/executant_model.dart';
 import 'package:emotion_app/app/mahas/components/others/empty_component.dart';
+import 'package:emotion_app/app/mahas/services/mahas_format.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -12,7 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../data/models/notes_model.dart';
+import '../../../data/models/emotions_model.dart';
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/mahas_colors.dart';
 import '../../../mahas/services/helper.dart';
@@ -30,6 +31,7 @@ class EmotionDetailSetupController extends GetxController {
   RxList<ExecutantModel> lookUp = <ExecutantModel>[].obs;
   RxList<ExecutantModel> selectedId = <ExecutantModel>[].obs;
   RxList<bool> tileOnTap = <bool>[].obs;
+  RxList<EmotionsModel> emotions = <EmotionsModel>[].obs;
 
   RxBool editable = true.obs;
   RxInt itemID = 0.obs;
@@ -38,13 +40,15 @@ class EmotionDetailSetupController extends GetxController {
   RxInt qty = 0.obs;
 
   late String emotionCon;
+  late int emotionId;
 
   SupabaseClient client = Supabase.instance.client;
 
   @override
-  void onInit() {
-    String emot = Get.parameters['emotion']!;
-    emotionCon = emot;
+  void onInit() async {
+    emotionCon = Get.parameters['emotion']!;
+    emotionId = int.parse(Get.parameters['id']!);
+    // await getData(emotionCon);
     super.onInit();
   }
 
@@ -149,16 +153,20 @@ class EmotionDetailSetupController extends GetxController {
                                     if (tileOnTap[index] == false) {
                                       tileOnTap[index] = true;
 
-                                      if (selectedId.isNotEmpty) {
-                                        for (var e in selectedId) {
-                                          if (e.id != lookUp[index].id) {
-                                            selectedId.add(lookUp[index]);
-                                          }
-                                        }
-                                      } else if (selectedId.isEmpty) {
-                                        selectedId.add(lookUp[index]);
-                                      }
-                                      // selectedId.add(lookUp[index]);
+                                      // if (selectedId.isNotEmpty &&
+                                      //     lookUp.isNotEmpty) {
+                                      //   for (var e in lookUp) {
+                                      //     var r = e.id!;
+                                      //     for (var e in selectedId) {
+                                      //       if (r != e.id!) {
+                                      //         selectedId.add(lookUp[index]);
+                                      //       }
+                                      //     }
+                                      //   }
+                                      // } else if (selectedId.isEmpty) {
+                                      //   selectedId.add(lookUp[index]);
+                                      // }
+                                      selectedId.add(lookUp[index]);
                                       qty.value++;
                                     } else {
                                       tileOnTap[index] = false;
@@ -214,7 +222,6 @@ class EmotionDetailSetupController extends GetxController {
                   child: ElevatedButton(
                     onPressed: () {
                       Get.back();
-                      print(selectedId);
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const RoundedRectangleBorder(
@@ -237,26 +244,31 @@ class EmotionDetailSetupController extends GetxController {
     );
   }
 
-  Future getData(int id) async {
-    if (EasyLoading.isShow) return;
-    EasyLoading.show();
-    editable.value = false;
+  Future getData(int emotionId) async {
+    if (EasyLoading.isShow) return false;
+    await EasyLoading.show();
     try {
-      var resGet = await client.from('notes').select().match(
-        {
-          "id": id,
-        },
-      );
-      var dataGet = Notes.fromDynamicList(resGet);
-      titleCon.value = dataGet.first.title;
-      descCon.value = dataGet.first.description;
-      itemID.value = dataGet.first.id!;
-    } on PostgrestException catch (e) {
-      Helper.dialogWarning(e.toString());
-    } catch (e) {
-      Helper.dialogWarning(e.toString());
-    }
+      var response = await client
+          .from("emotions_list")
+          .select(
+              '*, one_emotion(description),  emotionslist_executant!inner (executant!inner (name))')
+          .match({
+        "user_uid": client.auth.currentUser!.id,
+        "emotion_id": emotionId.toString(),
+      }).order("date_created");
 
+      List<EmotionsModel> datas = EmotionsModel.fromJsonList(response);
+      emotions(datas);
+      emotions.refresh();
+    } on PostgrestException catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    } catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    }
     EasyLoading.dismiss();
   }
 
@@ -268,41 +280,65 @@ class EmotionDetailSetupController extends GetxController {
     EasyLoading.show();
 
     if (edit == true) {
-      var res = await client.from("notes").update(
-        {
-          "title": titleCon.value,
-          "description": descCon.value,
-          "updated_at": DateTime.now().toIso8601String()
-        },
-      ).match(
-        {"id": itemID},
-      ).select();
-      editable.value = false;
-      isEdit.value = false;
-      var dataPost = Notes.fromDynamicList(res);
-      await getData(dataPost.first.id!);
-      EasyLoading.dismiss();
-    } else {
       try {
-        var res = await client.from('notes').insert(
+        var res = await client.from("emotions_list").update(
           {
-            "user_uid": client.auth.currentUser!.id,
-            "title": titleCon.value,
-            "description": descCon.value,
-            "created_at": DateTime.now().toIso8601String(),
+            "emotion_id": emotionId,
+            "emotion_title": titleCon.value,
+            "emotion_desc": descCon.value,
+            "images": image != null ? await convertImage(image!) : "",
+            "updated_at": DateTime.now().toIso8601String()
           },
+        ).match(
+          {"id": itemID},
         ).select();
         editable.value = false;
-        var dataPost = Notes.fromDynamicList(res);
+        isEdit.value = false;
+        var dataPost = EmotionsModel.fromJsonList(res);
         await getData(dataPost.first.id!);
+        // EasyLoading.dismiss();
+        Helper.dialogSuccess("Created Successfully!");
       } on PostgrestException catch (e) {
         Helper.dialogWarning(e.toString());
       } catch (e) {
         Helper.dialogWarning(e.toString());
       }
+    } else {
+      try {
+        var res = await client.from('emotions_list').insert(
+          {
+            "user_uid": client.auth.currentUser!.id,
+            "emotion_id": emotionId,
+            "emotion_title": titleCon.value,
+            "emotion_desc": descCon.value,
+            "images": image != null ? await convertImage(image!) : "",
+            "date_created": DateTime.now().toIso8601String(),
+            "time_created": MahasFormat.timeToString(TimeOfDay.now()),
+          },
+        ).select();
+        var dataPost = EmotionsModel.fromJsonList(res);
+        await getData(dataPost.first.id!);
+        if (selectedId.isNotEmpty) {
+          for (var e in selectedId) {
+            await client.from('emotionslist_executant').insert(
+              {
+                "emotionslist_id": emotions.first.id,
+                "executant_id": e.id,
+              },
+            );
+          }
+        }
+        await getData(dataPost.first.id!);
+        editable.value = false;
+        Helper.dialogSuccess("Created Successfully!");
+      } on PostgrestException catch (e) {
+        Helper.dialogWarning(e.toString());
+      } catch (e) {
+        Helper.dialogWarning(e.toString());
+        print(e);
+      }
 
       EasyLoading.dismiss();
-      Helper.dialogSuccess("Created Successfully!");
     }
   }
 

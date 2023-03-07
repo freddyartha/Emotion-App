@@ -113,11 +113,17 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                           ),
                                         ),
                                         InkWell(
-                                          onTap: () {},
+                                          onTap: () {
+                                            controller.selectedId.remove(
+                                                controller.selectedId[index]);
+                                          },
                                           child: const SizedBox(
                                             height: 30,
                                             width: 50,
-                                            child: Icon(Icons.delete_forever),
+                                            child: Icon(
+                                              Icons.delete_forever,
+                                              color: MahasColors.red,
+                                            ),
                                           ),
                                         )
                                       ],
