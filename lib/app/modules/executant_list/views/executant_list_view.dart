@@ -34,7 +34,7 @@ class ExecutantListView extends GetView<ExecutantListController> {
                 r.add(
                   const PopupMenuItem(
                     value: 'add',
-                    child: Text('Add an Emotion'),
+                    child: Text('Add an Executor'),
                   ),
                 );
 

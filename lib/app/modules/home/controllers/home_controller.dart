@@ -97,7 +97,7 @@ class HomeController extends GetxController {
   }
 
   void toEmotionDetail(String emotion, String id) {
-    Get.toNamed(Routes.EMOTION_DETAIL,
+    Get.toNamed(Routes.EMOTION_DETAIL_SETUP,
         parameters: {"emotion": emotion, "id": id});
   }
 
