@@ -18,33 +18,34 @@ class EmotionDetailController extends GetxController {
   RxList emotions = List<EmotionsModel>.empty().obs;
 
   late String emotionCon;
+  late int emotionId;
 
   SupabaseClient client = Supabase.instance.client;
 
   @override
   void onInit() async {
-    String emot = Get.parameters['emotion']!;
-    emotionCon = emot;
-    await getEmotions(1);
+    emotionCon = Get.parameters['emotion']!;
+    emotionId = int.parse(Get.parameters['id']!);
+    // await getData(emotionId);
     super.onInit();
   }
 
   void popupMenuButtonOnSelected(String v) async {
     if (v == 'add') {
       Get.toNamed(Routes.EMOTION_DETAIL_SETUP,
-          parameters: {"emotion": emotionCon});
+          parameters: {"emotion": emotionCon, "id": emotionId.toString()});
     }
   }
 
   Future<void> onRefresh() async {
-    await getEmotions(1);
+    await getData(emotionId);
   }
 
   void toEmotionDetailSetup(int id) {
     Get.toNamed(Routes.EMOTION_DETAIL_SETUP, parameters: {"id": id.toString()});
   }
 
-  Future getEmotions(int emotionId) async {
+  Future getData(int emotionId) async {
     if (EasyLoading.isShow) return false;
     await EasyLoading.show();
     try {

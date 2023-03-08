@@ -75,7 +75,7 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                           height: 60,
                           width: Get.width,
                           decoration: BoxDecoration(
-                            color: MahasColors.grey.withOpacity(0.3),
+                            color: MahasColors.grey.withOpacity(0.15),
                             borderRadius:
                                 BorderRadius.circular(MahasThemes.borderRadius),
                           ),
@@ -91,7 +91,7 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                           width: Get.width,
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: MahasColors.grey.withOpacity(0.3),
+                            color: MahasColors.grey.withOpacity(0.15),
                             borderRadius:
                                 BorderRadius.circular(MahasThemes.borderRadius),
                           ),
@@ -116,13 +116,22 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                           onTap: () {
                                             controller.selectedId.remove(
                                                 controller.selectedId[index]);
+                                            controller.tileOnTap[index] = false;
+                                            print(controller.tileOnTap);
+                                            controller.qty--;
                                           },
-                                          child: const SizedBox(
-                                            height: 30,
-                                            width: 50,
-                                            child: Icon(
-                                              Icons.delete_forever,
-                                              color: MahasColors.red,
+                                          child: Obx(
+                                            () => Visibility(
+                                              visible:
+                                                  controller.editable.value,
+                                              child: const SizedBox(
+                                                height: 30,
+                                                width: 50,
+                                                child: Icon(
+                                                  Icons.delete_forever,
+                                                  color: MahasColors.red,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         )
@@ -134,15 +143,25 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                   itemCount: controller.selectedId.length,
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  controller.detailOnPressed();
-                                },
-                                icon: const Icon(FontAwesomeIcons.circlePlus,
-                                    color: MahasColors.blue),
+                              Obx(
+                                () => Visibility(
+                                  visible: controller.editable.value,
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          controller.detailOnPressed();
+                                        },
+                                        icon: const Icon(
+                                            FontAwesomeIcons.circlePlus,
+                                            color: MahasColors.blue),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -161,7 +180,7 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                   height: Get.width * 0.8,
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: MahasColors.grey.withOpacity(0.3),
+                                    color: MahasColors.grey.withOpacity(0.15),
                                     borderRadius: BorderRadius.circular(
                                         MahasThemes.borderRadius),
                                   ),
@@ -182,7 +201,7 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                   height: Get.width * 0.8,
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: MahasColors.grey.withOpacity(0.3),
+                                    color: MahasColors.grey.withOpacity(0.15),
                                     borderRadius: BorderRadius.circular(
                                         MahasThemes.borderRadius),
                                   ),
@@ -223,7 +242,7 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                               height: Get.width * 0.8,
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: MahasColors.grey.withOpacity(0.3),
+                                color: MahasColors.grey.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(
                                     MahasThemes.borderRadius),
                               ),

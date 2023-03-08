@@ -105,19 +105,13 @@ class EmotionDetailSetupController extends GetxController {
 
   void detailOnPressed() async {
     FocusScope.of(Get.context!).unfocus();
-    if (tileOnTap.isNotEmpty) {
-      tileOnTap.clear();
-    }
-    if (qty.value > 0) {
+    if (qty.value < 0) {
       qty.value = 0;
     }
-    // if (selectedId.isNotEmpty) {
-    //   selectedId.clear();
-    // }
-    if (lookUp.isNotEmpty) {
-      lookUp.clear();
+    if (lookUp.isEmpty) {
+      await getEmotionExecutor();
     }
-    await getEmotionExecutor();
+
     await showMaterialModalBottomSheet(
       expand: true,
       isDismissible: false,
@@ -152,20 +146,6 @@ class EmotionDetailSetupController extends GetxController {
                                   onTap: () {
                                     if (tileOnTap[index] == false) {
                                       tileOnTap[index] = true;
-
-                                      // if (selectedId.isNotEmpty &&
-                                      //     lookUp.isNotEmpty) {
-                                      //   for (var e in lookUp) {
-                                      //     var r = e.id!;
-                                      //     for (var e in selectedId) {
-                                      //       if (r != e.id!) {
-                                      //         selectedId.add(lookUp[index]);
-                                      //       }
-                                      //     }
-                                      //   }
-                                      // } else if (selectedId.isEmpty) {
-                                      //   selectedId.add(lookUp[index]);
-                                      // }
                                       selectedId.add(lookUp[index]);
                                       qty.value++;
                                     } else {
@@ -175,7 +155,7 @@ class EmotionDetailSetupController extends GetxController {
                                     }
                                   },
                                   selectedTileColor:
-                                      MahasColors.blue.withOpacity(0.3),
+                                      MahasColors.primary.withOpacity(0.15),
                                   selectedColor: MahasColors.dark,
                                   selected: tileOnTap[index],
                                   horizontalTitleGap: 10,
@@ -232,7 +212,9 @@ class EmotionDetailSetupController extends GetxController {
                     child: Obx(
                       () => qty.value > 0
                           ? Text("Add (${qty.value})")
-                          : const Text("Add"),
+                          : qty.value <= 0
+                              ? const Text("Add")
+                              : const Text("Add"),
                     ),
                   ),
                 ),
@@ -292,12 +274,21 @@ class EmotionDetailSetupController extends GetxController {
         ).match(
           {"id": itemID},
         ).select();
+        var dataPost = EmotionsModel.fromJsonList(res);
+        if (selectedId.isNotEmpty) {
+          for (var e in selectedId) {
+            await client.from('emotionslist_executant').insert(
+              {
+                "emotionslist_id": dataPost.first.id,
+                "executant_id": e.id,
+              },
+            );
+          }
+        }
+        await getData(dataPost.first.id!);
         editable.value = false;
         isEdit.value = false;
-        var dataPost = EmotionsModel.fromJsonList(res);
-        await getData(dataPost.first.id!);
-        // EasyLoading.dismiss();
-        Helper.dialogSuccess("Created Successfully!");
+        Helper.dialogSuccess("Updated Successfully!");
       } on PostgrestException catch (e) {
         Helper.dialogWarning(e.toString());
       } catch (e) {
@@ -317,12 +308,11 @@ class EmotionDetailSetupController extends GetxController {
           },
         ).select();
         var dataPost = EmotionsModel.fromJsonList(res);
-        await getData(dataPost.first.id!);
         if (selectedId.isNotEmpty) {
           for (var e in selectedId) {
             await client.from('emotionslist_executant').insert(
               {
-                "emotionslist_id": emotions.first.id,
+                "emotionslist_id": dataPost.first.id,
                 "executant_id": e.id,
               },
             );
@@ -335,7 +325,6 @@ class EmotionDetailSetupController extends GetxController {
         Helper.dialogWarning(e.toString());
       } catch (e) {
         Helper.dialogWarning(e.toString());
-        print(e);
       }
 
       EasyLoading.dismiss();

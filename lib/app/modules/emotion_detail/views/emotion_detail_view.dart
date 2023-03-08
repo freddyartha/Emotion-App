@@ -51,7 +51,7 @@ class EmotionDetailView extends GetView<EmotionDetailController> {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: FutureBuilder(
-            future: controller.getEmotions(1),
+            future: controller.getData(controller.emotionId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -66,6 +66,7 @@ class EmotionDetailView extends GetView<EmotionDetailController> {
                     ),
                     itemBuilder: (context, index) {
                       EmotionsModel emotions = controller.emotions[index];
+                      print(emotions);
                       return ListTile(
                         onTap: () =>
                             controller.toEmotionDetailSetup(emotions.id!),

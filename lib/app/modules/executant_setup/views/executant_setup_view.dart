@@ -84,7 +84,7 @@ class ExecutantSetupView extends GetView<ExecutantSetupController> {
                                   height: Get.width * 0.8,
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: MahasColors.grey.withOpacity(0.3),
+                                    color: MahasColors.grey.withOpacity(0.15),
                                     borderRadius: BorderRadius.circular(
                                         MahasThemes.borderRadius),
                                   ),
@@ -109,7 +109,7 @@ class ExecutantSetupView extends GetView<ExecutantSetupController> {
                                   height: Get.width * 0.8,
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: MahasColors.grey.withOpacity(0.3),
+                                    color: MahasColors.grey.withOpacity(0.15),
                                     borderRadius: BorderRadius.circular(
                                         MahasThemes.borderRadius),
                                   ),
@@ -154,7 +154,7 @@ class ExecutantSetupView extends GetView<ExecutantSetupController> {
                               height: Get.width * 0.8,
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: MahasColors.grey.withOpacity(0.3),
+                                color: MahasColors.grey.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(
                                     MahasThemes.borderRadius),
                               ),
