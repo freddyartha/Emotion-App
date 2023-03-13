@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:emotion_app/app/data/models/emotions_model.dart';
 import 'package:emotion_app/app/routes/app_pages.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,14 +29,16 @@ class EmotionDetailController extends GetxController {
   void onInit() async {
     emotionCon = Get.parameters['emotion']!;
     emotionId = int.parse(Get.parameters['id']!);
-    // await getData(emotionId);
     super.onInit();
   }
 
   void popupMenuButtonOnSelected(String v) async {
     if (v == 'add') {
-      Get.toNamed(Routes.EMOTION_DETAIL_SETUP,
-          parameters: {"emotion": emotionCon, "id": emotionId.toString()});
+      Get.toNamed(Routes.EMOTION_DETAIL_SETUP, parameters: {
+        "emotion": emotionCon,
+        "emotionId": emotionId.toString(),
+        "isAdd": "yes"
+      });
     }
   }
 
@@ -42,7 +47,11 @@ class EmotionDetailController extends GetxController {
   }
 
   void toEmotionDetailSetup(int id) {
-    Get.toNamed(Routes.EMOTION_DETAIL_SETUP, parameters: {"id": id.toString()});
+    Get.toNamed(Routes.EMOTION_DETAIL_SETUP, parameters: {
+      "emotion": emotionCon,
+      "itemId": id.toString(),
+      "emotionId": emotionId.toString()
+    });
   }
 
   Future getData(int emotionId) async {
@@ -52,11 +61,13 @@ class EmotionDetailController extends GetxController {
       var response = await client
           .from("emotions_list")
           .select(
-              '*, one_emotion(description),  emotionslist_executant!inner (executant!inner (name))')
-          .match({
-        "user_uid": client.auth.currentUser!.id,
-        "emotion_id": emotionId.toString(),
-      }).order("date_created");
+              '*, one_emotion(description), emotionslist_executant!inner (executant!inner (name))')
+          .match(
+        {
+          "user_uid": client.auth.currentUser!.id,
+          "emotion_id": emotionId.toString(),
+        },
+      ).order("date_created");
 
       List<EmotionsModel> datas = EmotionsModel.fromJsonList(response);
       emotions(datas);
@@ -71,5 +82,11 @@ class EmotionDetailController extends GetxController {
       );
     }
     EasyLoading.dismiss();
+  }
+
+  Uint8List stringToImage(String imageValue) {
+    List<int> byte = jsonDecode(imageValue).cast<int>();
+    Uint8List ul = Uint8List.fromList(byte);
+    return ul;
   }
 }

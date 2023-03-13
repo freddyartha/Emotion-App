@@ -7,6 +7,8 @@ class MahasThemes {
   static double borderRadius = 10;
 
   static ThemeData light = ThemeData(
+    progressIndicatorTheme:
+        const ProgressIndicatorThemeData(color: MahasColors.primary),
     fontFamily: GoogleFonts.quicksand().fontFamily,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

@@ -70,7 +70,8 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                   editable: controller.editable.value,
                 ),
                 Obx(
-                  () => controller.selectedId.isEmpty
+                  () => controller.selectedId.isEmpty &&
+                          controller.editable.isTrue
                       ? Container(
                           height: 60,
                           width: Get.width,
@@ -116,8 +117,10 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                           onTap: () {
                                             controller.selectedId.remove(
                                                 controller.selectedId[index]);
-                                            controller.tileOnTap[index] = false;
-                                            print(controller.tileOnTap);
+                                            controller
+                                                .tileOnTap[controller
+                                                    .tileOnTap[index].id!]
+                                                .data = false;
                                             controller.qty--;
                                           },
                                           child: Obx(

@@ -16,26 +16,31 @@ class HomeController extends GetxController {
   RxList<OneemotionModel> listEmotion = <OneemotionModel>[].obs;
   RxBool loadData = false.obs;
   Uint8List? getImage;
+  // ScrollController scrollController = ScrollController(initialScrollOffset: 0);
 
   // @override
   // void onInit() async {
-  //   // await getUser();
-  //   await getOneEmotion();
+  //   SchedulerBinding.instance.addPostFrameCallback(
+  //     (_) {
+  //       scrollController = ScrollController(initialScrollOffset: 0);
+  //     },
+  //   );
+  //   // await getOneEmotion();
   //   super.onInit();
   // }
 
-  @override
-  void onReady() async {
-    loadData.value = false;
-    await getUser();
-    await getOneEmotion();
-    super.onReady();
-  }
+  // @override
+  // void onReady() async {
+  //   loadData.value = false;
+  //   await getUser();
+  //   await getOneEmotion();
+  //   super.onReady();
+  // }
 
   Future<void> onRefresh() async {
     loadData.value = false;
     await getUser();
-    await getOneEmotion();
+    // await getOneEmotion();
   }
 
   Future goToSettingsList() async {
@@ -43,7 +48,9 @@ class HomeController extends GetxController {
   }
 
   Future getUser() async {
-    if (EasyLoading.isShow) return false;
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
     await EasyLoading.show();
 
     try {
@@ -54,7 +61,10 @@ class HomeController extends GetxController {
       );
       List<Users> datas = Users.fromDynamicList(response);
       users.assignAll(datas);
-      getImage = stringToImage(users.first.profilePic!);
+      getImage = users.first.profilePic != null
+          ? stringToImage(users.first.profilePic!)
+          : null;
+      await getOneEmotion();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
         e.toString(),
@@ -82,7 +92,7 @@ class HomeController extends GetxController {
       );
       List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
       listEmotion.assignAll(datas);
-      loadData.toggle();
+      loadData.value = true;
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
         e.toString(),
@@ -93,7 +103,7 @@ class HomeController extends GetxController {
       );
     }
     EasyLoading.dismiss();
-    return users;
+    return listEmotion;
   }
 
   void toEmotionDetail(String emotion, String id) {

@@ -60,7 +60,7 @@ class SignInController extends GetxController {
         box.write(
             'rememberme', {'email': emailCon.value, 'pass': passwordCon.value});
       }
-      Get.offNamed(Routes.HOME);
+      Get.offAllNamed(Routes.HOME);
     } else {
       Helper.dialogWarning(
           "We have sent you email verification, please verify your email first!");

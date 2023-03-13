@@ -20,29 +20,23 @@ class EmotionDetailView extends GetView<EmotionDetailController> {
         ),
         centerTitle: true,
         actions: [
-          Obx(
-            () => Visibility(
-              visible: controller.editable.isFalse ? true : false,
-              child: PopupMenuButton(
-                icon: const Icon(
-                  Icons.more_horiz_rounded,
-                  size: 25,
-                ),
-                onSelected: (value) =>
-                    controller.popupMenuButtonOnSelected(value),
-                itemBuilder: (BuildContext context) {
-                  List<PopupMenuItem<String>> r = [];
-                  r.add(
-                    PopupMenuItem(
-                      value: 'add',
-                      child: Text('Add New ${controller.emotionCon} Emotion'),
-                    ),
-                  );
-
-                  return r;
-                },
-              ),
+          PopupMenuButton(
+            icon: const Icon(
+              Icons.more_horiz_rounded,
+              size: 25,
             ),
+            onSelected: (value) => controller.popupMenuButtonOnSelected(value),
+            itemBuilder: (BuildContext context) {
+              List<PopupMenuItem<String>> r = [];
+              r.add(
+                PopupMenuItem(
+                  value: 'add',
+                  child: Text('Add New ${controller.emotionCon} Emotion'),
+                ),
+              );
+
+              return r;
+            },
           ),
         ],
       ),
@@ -54,8 +48,10 @@ class EmotionDetailView extends GetView<EmotionDetailController> {
             future: controller.getData(controller.emotionId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: EmptyComponent(),
+                return Center(
+                  child: EmptyComponent(
+                    onPressed: () => controller.onRefresh(),
+                  ),
                 );
               } else {
                 return Obx(
@@ -66,15 +62,29 @@ class EmotionDetailView extends GetView<EmotionDetailController> {
                     ),
                     itemBuilder: (context, index) {
                       EmotionsModel emotions = controller.emotions[index];
-                      print(emotions);
                       return ListTile(
                         onTap: () =>
                             controller.toEmotionDetailSetup(emotions.id!),
                         horizontalTitleGap: 5,
-                        leading: const Icon(Icons.notes_rounded),
+                        leading: emotions.images != ""
+                            ? SizedBox(
+                                width: 35,
+                                height: 35,
+                                child: ClipOval(
+                                  child: Image.memory(
+                                    controller.stringToImage(emotions.images!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : const Icon(
+                                Icons.notes_rounded,
+                                size: 35,
+                              ),
                         title: Text(emotions.emotionTitle!),
                         trailing: Text(
-                            MahasFormat.displayDate(emotions.dateCreated!)),
+                          MahasFormat.displayDate(emotions.dateCreated!),
+                        ),
                       );
                     },
                   ),
