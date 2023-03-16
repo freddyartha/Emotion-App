@@ -14,6 +14,8 @@ import '../modules/one_emotion_list/bindings/one_emotion_list_binding.dart';
 import '../modules/one_emotion_list/views/one_emotion_list_view.dart';
 import '../modules/one_emotion_setup/bindings/one_emotion_setup_binding.dart';
 import '../modules/one_emotion_setup/views/one_emotion_setup_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
 import '../modules/settings_list/bindings/settings_list_binding.dart';
 import '../modules/settings_list/views/settings_list_view.dart';
 import '../modules/sign_in/bindings/sign_in_binding.dart';
@@ -80,6 +82,11 @@ class AppPages {
       name: _Paths.ONE_EMOTION_SETUP,
       page: () => const OneEmotionSetupView(),
       binding: OneEmotionSetupBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
     ),
   ];
 }

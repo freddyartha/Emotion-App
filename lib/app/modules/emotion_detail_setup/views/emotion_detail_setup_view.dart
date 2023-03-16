@@ -115,12 +115,10 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            controller.selectedId.remove(
-                                                controller.selectedId[index]);
-                                            controller
-                                                .tileOnTap[controller
-                                                    .tileOnTap[index].id!]
-                                                .data = false;
+                                            controller.selectedId
+                                                .remove([index]);
+                                            controller.tileOnTap[index].data =
+                                                false;
                                             controller.qty--;
                                           },
                                           child: Obx(
@@ -176,7 +174,7 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                 GetBuilder<EmotionDetailSetupController>(
                   builder: (c) => Column(
                     children: [
-                      c.detailId.value != ""
+                      c.itemId.value != 0
                           ? c.editable.isFalse
                               ? Container(
                                   width: Get.width,
@@ -188,12 +186,16 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                         MahasThemes.borderRadius),
                                   ),
                                   child: c.getImage == null
-                                      ? const Center(
-                                          child: SizedBox(
-                                            width: 30,
-                                            height: 30,
-                                            child: CircularProgressIndicator(
-                                              color: MahasColors.primary,
+                                      ? Center(
+                                          child: Container(
+                                            height: 100,
+                                            width: 100,
+                                            decoration: const BoxDecoration(
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                  "assets/images/no_image_no_caption.png",
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         )
@@ -209,12 +211,25 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                         MahasThemes.borderRadius),
                                   ),
                                   child: c.getImage == null && c.image == null
-                                      ? const Center(
-                                          child: SizedBox(
-                                            width: 30,
-                                            height: 30,
-                                            child: CircularProgressIndicator(
-                                              color: MahasColors.primary,
+                                      // ? const Center(
+                                      //     child: SizedBox(
+                                      //       width: 30,
+                                      //       height: 30,
+                                      //       child: CircularProgressIndicator(
+                                      //         color: MahasColors.primary,
+                                      //       ),
+                                      //     ),
+                                      //   )
+                                      ? Center(
+                                          child: Container(
+                                            height: 100,
+                                            width: 100,
+                                            decoration: const BoxDecoration(
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                  "assets/images/no_image_no_caption.png",
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         )

@@ -15,6 +15,7 @@ abstract class Routes {
   static const EXECUTANT_SETUP = _Paths.EXECUTANT_SETUP;
   static const ONE_EMOTION_LIST = _Paths.ONE_EMOTION_LIST;
   static const ONE_EMOTION_SETUP = _Paths.ONE_EMOTION_SETUP;
+  static const PROFILE = _Paths.PROFILE;
 }
 
 abstract class _Paths {
@@ -29,4 +30,5 @@ abstract class _Paths {
   static const EXECUTANT_SETUP = '/executant-setup';
   static const ONE_EMOTION_LIST = '/one-emotion-list';
   static const ONE_EMOTION_SETUP = '/one-emotion-setup';
+  static const PROFILE = '/profile';
 }

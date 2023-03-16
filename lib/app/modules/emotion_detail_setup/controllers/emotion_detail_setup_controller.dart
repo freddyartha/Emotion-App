@@ -34,18 +34,14 @@ class EmotionDetailSetupController extends GetxController {
   RxList<TileonTapModel> tileOnTap = <TileonTapModel>[].obs;
   RxList<EmotionsModel> emotions = <EmotionsModel>[].obs;
   RxList commonItems = [].obs;
-  // RxList getExecutant = [].obs;
-
   RxBool editable = true.obs;
-
   RxBool isEdit = false.obs;
-  RxString detailId = "".obs;
   RxInt qty = 0.obs;
+  RxInt itemId = 0.obs;
+  RxString isAdd = "".obs;
 
   late String emotionCon;
-  late int itemId;
   late int emotionId;
-  RxString isAdd = "".obs;
 
   SupabaseClient client = Supabase.instance.client;
 
@@ -54,12 +50,12 @@ class EmotionDetailSetupController extends GetxController {
     emotionCon = Get.parameters['emotion']!;
     var e = Get.parameters['itemId'];
     if (e != null) {
-      itemId = int.parse(e);
+      itemId.value = int.parse(e);
     }
     emotionId = int.parse(Get.parameters['emotionId']!);
     isAdd.value = Get.parameters['isAdd'] ?? "";
     if (isAdd.value == "") {
-      await getData(itemId);
+      await getData(itemId.value);
     }
 
     super.onInit();
@@ -179,7 +175,6 @@ class EmotionDetailSetupController extends GetxController {
                                   () => ListTile(
                                     onTap: () {
                                       if (tileOnTap[index].data == false) {
-                                        print(lookUp[index].id);
                                         tileOnTap[index].data = true;
                                         selectedId.add(lookUp[index]);
                                         qty.value++;
@@ -279,12 +274,11 @@ class EmotionDetailSetupController extends GetxController {
           "id": itemId.toString(),
         },
       ).order("date_created");
-      print(response);
       emotions(EmotionsModel.fromJsonList(response));
       emotions.refresh();
       titleCon.value = emotions.first.emotionTitle!;
       descCon.value = emotions.first.emotionDesc!;
-      getImage = emotions.first.images != ""
+      getImage = emotions.first.images != null
           ? stringToImage(emotions.first.images!)
           : null;
 
@@ -331,17 +325,14 @@ class EmotionDetailSetupController extends GetxController {
             "emotionslist_id": itemId,
           },
         );
-        print(data);
         if (data != null) {
           for (var e in data) {
             for (int i = 0; i < selectedId.length; i++) {
               selectedId
                   .removeWhere((element) => element.id == e['executant_id']);
-              // break;
             }
           }
         }
-        print(selectedId);
         if (selectedId.isNotEmpty) {
           for (var e in selectedId) {
             await client.from('emotionslist_executant').insert(
@@ -352,7 +343,7 @@ class EmotionDetailSetupController extends GetxController {
             );
           }
         }
-        await getData(itemId);
+        await getData(itemId.value);
         editable.value = false;
         isEdit.value = false;
         Helper.dialogSuccess("Updated Successfully!");

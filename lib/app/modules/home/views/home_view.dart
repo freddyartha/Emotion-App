@@ -1,3 +1,4 @@
+import 'package:emotion_app/app/mahas/components/chart/pie_chart_component.dart';
 import 'package:emotion_app/app/mahas/components/mahas_themes.dart';
 import 'package:emotion_app/app/mahas/components/others/empty_component.dart';
 import 'package:flutter/material.dart';
@@ -32,17 +33,17 @@ class HomeView extends GetView<HomeController> {
                       ),
                     );
                   } else {
-                    return SingleChildScrollView(
-                      physics: const ScrollPhysics(),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Obx(
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () => controller.toProfile(),
+                                child: Obx(
                                   () => controller.users.isNotEmpty
                                       ? SizedBox(
                                           width: 60,
@@ -52,7 +53,9 @@ class HomeView extends GetView<HomeController> {
                                                         .profilePic !=
                                                     null
                                                 ? Image.memory(
-                                                    controller.getImage!)
+                                                    controller.getImage!,
+                                                    fit: BoxFit.cover,
+                                                  )
                                                 : Image.asset(
                                                     "assets/images/no_image.png",
                                                   ),
@@ -68,7 +71,10 @@ class HomeView extends GetView<HomeController> {
                                           ),
                                         ),
                                 ),
-                                Expanded(
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () => controller.toProfile(),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
@@ -99,146 +105,206 @@ class HomeView extends GetView<HomeController> {
                                     ),
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    controller.goToSettingsList();
-                                  },
-                                  child: const SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Icon(
-                                      Icons.settings_outlined,
-                                      color: MahasColors.light,
-                                    ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  controller.goToSettingsList();
+                                },
+                                child: const SizedBox(
+                                  width: 60,
+                                  height: 60,
+                                  child: Icon(
+                                    Icons.settings_outlined,
+                                    color: MahasColors.light,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "What's your feeling today?",
-                                  style: MahasThemes.whiteH2,
-                                  overflow: TextOverflow.visible,
-                                  maxLines: 2,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                SizedBox(
-                                  height: 110,
-                                  width: Get.width,
-                                  child: Scrollbar(
-                                    controller: ScrollController(),
-                                    thumbVisibility: true,
-                                    radius: const Radius.circular(10),
-                                    child: ListView.separated(
-                                      shrinkWrap: true,
-                                      physics: const ScrollPhysics(),
-                                      scrollDirection: Axis.horizontal,
-                                      itemBuilder: (context, index) {
-                                        return Obx(
-                                          () => controller.loadData.isTrue
-                                              ? Obx(
-                                                  () =>
-                                                      controller.listEmotion
-                                                              .isNotEmpty
-                                                          ? InkWell(
-                                                              onTap: () => controller.toEmotionDetail(
-                                                                  controller
-                                                                      .listEmotion[
-                                                                          index]
-                                                                      .description!,
-                                                                  controller
-                                                                      .listEmotion[
-                                                                          index]
-                                                                      .id!
-                                                                      .toString()),
-                                                              child: SizedBox(
-                                                                width: 80,
-                                                                height: 100,
-                                                                child: Column(
-                                                                  children: [
-                                                                    SizedBox(
-                                                                      width: 75,
-                                                                      height:
-                                                                          75,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "What's your feeling today?",
+                                style: MahasThemes.whiteH2,
+                                overflow: TextOverflow.visible,
+                                maxLines: 2,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              SizedBox(
+                                height: 110,
+                                width: Get.width,
+                                child: Scrollbar(
+                                  controller: ScrollController(),
+                                  thumbVisibility: true,
+                                  radius: const Radius.circular(10),
+                                  child: ListView.separated(
+                                    shrinkWrap: true,
+                                    physics: const ScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (context, index) {
+                                      return Obx(
+                                        () => controller.loadData.isTrue
+                                            ? Obx(
+                                                () =>
+                                                    controller.listEmotion
+                                                            .isNotEmpty
+                                                        ? InkWell(
+                                                            onTap: () => controller.toEmotionDetail(
+                                                                controller
+                                                                    .listEmotion[
+                                                                        index]
+                                                                    .description!,
+                                                                controller
+                                                                    .listEmotion[
+                                                                        index]
+                                                                    .id!
+                                                                    .toString()),
+                                                            child: SizedBox(
+                                                              width: 80,
+                                                              height: 100,
+                                                              child: Column(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 75,
+                                                                    height: 75,
+                                                                    child:
+                                                                        ClipOval(
                                                                       child:
-                                                                          ClipOval(
-                                                                        child:
-                                                                            Container(
-                                                                          padding:
-                                                                              const EdgeInsets.all(5),
-                                                                          child:
-                                                                              Image.memory(
-                                                                            controller.stringToImage(controller.listEmotion[index].image!),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                          ),
+                                                                          Container(
+                                                                        padding:
+                                                                            const EdgeInsets.all(5),
+                                                                        child: Image
+                                                                            .memory(
+                                                                          controller.stringToImage(controller
+                                                                              .listEmotion[index]
+                                                                              .image!),
+                                                                          fit: BoxFit
+                                                                              .cover,
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                    FittedBox(
-                                                                      fit: BoxFit
-                                                                          .fitWidth,
-                                                                      child:
-                                                                          Text(
-                                                                        controller
-                                                                            .listEmotion[index]
-                                                                            .description!,
-                                                                        style: MahasThemes
-                                                                            .whiteNormal,
-                                                                      ),
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                  FittedBox(
+                                                                    fit: BoxFit
+                                                                        .fitWidth,
+                                                                    child: Text(
+                                                                      controller
+                                                                          .listEmotion[
+                                                                              index]
+                                                                          .description!,
+                                                                      style: MahasThemes
+                                                                          .whiteNormal,
+                                                                    ),
+                                                                  )
+                                                                ],
                                                               ),
-                                                            )
-                                                          : SizedBox(
-                                                              height: 70,
-                                                              width: Get.width,
-                                                              child:
-                                                                  const EmptyComponent(),
                                                             ),
-                                                )
-                                              : SizedBox(
-                                                  height: 100,
-                                                  width: Get.width,
-                                                  child: const Center(
-                                                    child: ShimmerComponent(
-                                                      count: 3,
-                                                    ),
+                                                          )
+                                                        : SizedBox(
+                                                            height: 70,
+                                                            width: Get.width,
+                                                            child:
+                                                                const EmptyComponent(),
+                                                          ),
+                                              )
+                                            : SizedBox(
+                                                height: 100,
+                                                width: Get.width,
+                                                child: const Center(
+                                                  child: ShimmerComponent(
+                                                    count: 3,
                                                   ),
                                                 ),
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return const Divider(
-                                          thickness: 0,
-                                        );
-                                      },
-                                      itemCount: controller.listEmotion.length,
-                                    ),
+                                              ),
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return const Divider(
+                                        thickness: 0,
+                                      );
+                                    },
+                                    itemCount: controller.listEmotion.length,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            height: Get.height,
+                        ),
+                        Expanded(
+                          child: Container(
                             width: Get.width,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 25, horizontal: 10),
                             decoration: BoxDecoration(
                               color: MahasColors.light,
                               borderRadius: BorderRadius.circular(25),
                             ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Your Emotions in Chart!",
+                                  style: MahasThemes.blackH2,
+                                  textAlign: TextAlign.start,
+                                ),
+                                PieChartComponent(
+                                  data: controller.pieChartCon,
+                                  marginBottom: 0,
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  "List :",
+                                  style: MahasThemes.blackH3,
+                                  textAlign: TextAlign.start,
+                                ),
+                                Expanded(
+                                  child: Obx(
+                                    () => controller.emotionCount.isNotEmpty
+                                        ? ListView.separated(
+                                            itemBuilder: (context, index) =>
+                                                ListTile(
+                                              title: Text(
+                                                controller.emotionCount[index]
+                                                    ['title'],
+                                                style: MahasThemes.blackNormal,
+                                              ),
+                                              trailing: Text(
+                                                controller.emotionCount[index]
+                                                        ['count']
+                                                    .toString(),
+                                                style: MahasThemes.mutedNormal,
+                                              ),
+                                            ),
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    const Divider(
+                                              height: 0,
+                                            ),
+                                            itemCount:
+                                                controller.emotionCount.length,
+                                          )
+                                        : const ShimmerComponent(
+                                            count: 3,
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        )
+                      ],
                     );
                   }
                 },

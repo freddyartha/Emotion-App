@@ -11,12 +11,14 @@ class MahasColors {
   static const Color green = Color(0xFF43A047);
 
   static List<Color> grafikColors = [
-    brown,
-    yellow,
     blue,
-    cream,
     red,
+    yellow,
+    violet,
+    brown,
+    cream,
     grey,
+    green,
   ];
 
   static const Color primary = green;

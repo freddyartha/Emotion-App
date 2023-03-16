@@ -6,7 +6,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../data/models/emotions_chart_model.dart';
 import '../../../data/models/users_model.dart';
+import '../../../mahas/components/chart/pie_chart_component.dart';
+import '../../../mahas/mahas_colors.dart';
 import '../../../mahas/services/helper.dart';
 import '../../../routes/app_pages.dart';
 
@@ -14,33 +17,19 @@ class HomeController extends GetxController {
   SupabaseClient client = Supabase.instance.client;
   RxList<Users> users = <Users>[].obs;
   RxList<OneemotionModel> listEmotion = <OneemotionModel>[].obs;
+  RxList<PieChartItem> pieChartCon = <PieChartItem>[].obs;
+  RxList<Map<String, dynamic>> emotionCount = <Map<String, dynamic>>[].obs;
+  RxList<EmotionsChartModel> emotions = <EmotionsChartModel>[].obs;
   RxBool loadData = false.obs;
   Uint8List? getImage;
-  // ScrollController scrollController = ScrollController(initialScrollOffset: 0);
 
-  // @override
-  // void onInit() async {
-  //   SchedulerBinding.instance.addPostFrameCallback(
-  //     (_) {
-  //       scrollController = ScrollController(initialScrollOffset: 0);
-  //     },
-  //   );
-  //   // await getOneEmotion();
-  //   super.onInit();
-  // }
-
-  // @override
-  // void onReady() async {
-  //   loadData.value = false;
-  //   await getUser();
-  //   await getOneEmotion();
-  //   super.onReady();
-  // }
+  void toProfile() {
+    Get.toNamed(Routes.PROFILE);
+  }
 
   Future<void> onRefresh() async {
     loadData.value = false;
     await getUser();
-    // await getOneEmotion();
   }
 
   Future goToSettingsList() async {
@@ -93,6 +82,7 @@ class HomeController extends GetxController {
       List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
       listEmotion.assignAll(datas);
       loadData.value = true;
+      await getEmotionsList();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
         e.toString(),
@@ -106,6 +96,69 @@ class HomeController extends GetxController {
     return listEmotion;
   }
 
+  Future getEmotionsList() async {
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
+    await EasyLoading.show();
+    try {
+      var response = await client
+          .from("emotions_list")
+          .select('emotion_title, one_emotion(id, description))')
+          .match(
+        {
+          "user_uid": client.auth.currentUser!.id,
+        },
+      ).order("date_created");
+
+      emotions(EmotionsChartModel.fromJsonList(response));
+      emotions.refresh();
+      pieChartCon.clear();
+      emotionCount.clear();
+      for (var e in emotions) {
+        bool alreadyCounted = false;
+        for (int j = 0; j < emotionCount.length; j++) {
+          if (emotionCount[j]['id'] == e.oneEmotion!.id) {
+            emotionCount[j]['count']++;
+            alreadyCounted = true;
+            break;
+          }
+        }
+        if (!alreadyCounted) {
+          Map<String, dynamic> countMap = {
+            'id': e.oneEmotion!.id,
+            'count': 1,
+            'title': e.oneEmotion!.description
+          };
+          emotionCount.add(countMap);
+        }
+      }
+      int index = 0;
+      for (var e in emotionCount) {
+        pieChartCon.add(
+          PieChartItem(
+            color: MahasColors.grafikColors[index].withOpacity(0.7),
+            text: e['title'],
+            value: double.parse(e['count'].toString()),
+          ),
+        );
+        index++;
+        if (index >= MahasColors.grafikColors.length) {
+          index = 0;
+        }
+      }
+    } on PostgrestException catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    } catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    }
+    EasyLoading.dismiss();
+  }
+
   void toEmotionDetail(String emotion, String id) {
     Get.toNamed(Routes.EMOTION_DETAIL,
         parameters: {"emotion": emotion, "id": id});
@@ -116,4 +169,11 @@ class HomeController extends GetxController {
     Uint8List ul = Uint8List.fromList(byte);
     return ul;
   }
+}
+
+class EmotionCount {
+  int? id;
+  int? count;
+
+  EmotionCount(this.id, this.count);
 }

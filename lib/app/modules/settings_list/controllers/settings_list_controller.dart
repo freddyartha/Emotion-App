@@ -44,12 +44,18 @@ class SettingsListController extends GetxController {
     Get.toNamed(Routes.ONE_EMOTION_LIST);
   }
 
+  void cProfile() {
+    Get.toNamed(Routes.PROFILE);
+  }
+
   @override
   void onInit() {
     menus.add(MenuItemModel('Add Who Made Your Emotion',
         FontAwesomeIcons.peopleGroup, cExecutantList));
     menus.add(MenuItemModel(
         'Add an Emotion', FontAwesomeIcons.faceSmile, cOneEmotionList));
+    menus.add(MenuItemModel(
+        'Edit Profile', FontAwesomeIcons.userAstronaut, cProfile));
     menus.add(
         MenuItemModel('Sign Out', FontAwesomeIcons.rightFromBracket, cSignOut));
     super.onInit();

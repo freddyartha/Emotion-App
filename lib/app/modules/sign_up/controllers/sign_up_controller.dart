@@ -10,7 +10,8 @@ import '../../../mahas/services/mahas_format.dart';
 
 class SignUpController extends GetxController {
   final InputTextController nameCon = InputTextController();
-  final InputTextController addressCon = InputTextController();
+  final InputTextController addressCon =
+      InputTextController(type: InputTextType.paragraf);
   final InputRadioController sexCon = InputRadioController(
     items: [
       RadioButtonItem(text: "Male", value: "m"),
