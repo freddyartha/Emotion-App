@@ -240,20 +240,26 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                               ? Image.file(
                                                   File(c.image!.path),
                                                 )
-                                              : Center(
-                                                  child: Container(
-                                                    height: 100,
-                                                    width: 100,
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      image: DecorationImage(
-                                                        image: AssetImage(
-                                                          "assets/images/no_image_no_caption.png",
+                                              : c.getImage == null &&
+                                                      c.image != null
+                                                  ? Image.file(
+                                                      File(c.image!.path),
+                                                    )
+                                                  : Center(
+                                                      child: Container(
+                                                        height: 100,
+                                                        width: 100,
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          image:
+                                                              DecorationImage(
+                                                            image: AssetImage(
+                                                              "assets/images/no_image_no_caption.png",
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
                                 )
                           : Container(
                               width: Get.width,

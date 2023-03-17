@@ -25,7 +25,7 @@ class EmptyComponent extends StatelessWidget {
           ),
           const Padding(padding: EdgeInsets.all(5)),
           Text(
-            "Tidak ada data",
+            "There is no data",
             style: TextStyle(
               color: MahasColors.dark.withOpacity(.3),
             ),

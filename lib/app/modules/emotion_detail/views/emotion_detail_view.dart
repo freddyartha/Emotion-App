@@ -47,49 +47,50 @@ class EmotionDetailView extends GetView<EmotionDetailController> {
           child: FutureBuilder(
             future: controller.getData(controller.emotionId),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: EmptyComponent(
-                    onPressed: () => controller.onRefresh(),
-                  ),
-                );
-              } else {
-                return Obx(
-                  () => ListView.separated(
-                    itemCount: controller.emotions.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 0,
-                    ),
-                    itemBuilder: (context, index) {
-                      EmotionsModel emotions = controller.emotions[index];
-                      return ListTile(
-                        onTap: () =>
-                            controller.toEmotionDetailSetup(emotions.id!),
-                        horizontalTitleGap: 5,
-                        leading: emotions.images != ""
-                            ? SizedBox(
-                                width: 35,
-                                height: 35,
-                                child: ClipOval(
-                                  child: Image.memory(
-                                    controller.stringToImage(emotions.images!),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                            : const Icon(
-                                Icons.notes_rounded,
-                                size: 35,
-                              ),
-                        title: Text(emotions.emotionTitle!),
-                        trailing: Text(
-                          MahasFormat.displayDate(emotions.dateCreated!),
+              return Obx(
+                () => controller.emotions.isEmpty
+                    ? Center(
+                        child: EmptyComponent(
+                          onPressed: () => controller.onRefresh(),
                         ),
-                      );
-                    },
-                  ),
-                );
-              }
+                      )
+                    : ListView.separated(
+                        itemCount: controller.emotions.length,
+                        separatorBuilder: (context, index) => const Divider(
+                          height: 0,
+                        ),
+                        itemBuilder: (context, index) {
+                          EmotionsModel emotions = controller.emotions[index];
+                          return ListTile(
+                            onTap: () =>
+                                controller.toEmotionDetailSetup(emotions.id!),
+                            horizontalTitleGap: 5,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 10),
+                            leading: emotions.images != null
+                                ? SizedBox(
+                                    width: 35,
+                                    height: 35,
+                                    child: ClipOval(
+                                      child: Image.memory(
+                                        controller
+                                            .stringToImage(emotions.images!),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.notes_rounded,
+                                    size: 35,
+                                  ),
+                            title: Text(emotions.emotionTitle!),
+                            trailing: Text(
+                              MahasFormat.displayDate(emotions.dateCreated!),
+                            ),
+                          );
+                        },
+                      ),
+              );
             },
           ),
         ),

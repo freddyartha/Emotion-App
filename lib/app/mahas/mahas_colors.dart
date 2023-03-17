@@ -9,16 +9,21 @@ class MahasColors {
   static const Color cream = Color(0xFFF2C094);
   static const Color grey = Color(0xFF9E9E9E);
   static const Color green = Color(0xFF43A047);
+  static const Color charcoal = Color(0xFF34282C);
+  static const Color slate = Color(0xFF2B3856);
+  static const Color gunMetal = Color(0xFF2C3539);
+  static const Color lGreen = Color(0xFF004225);
 
   static List<Color> grafikColors = [
     blue,
     red,
-    yellow,
     violet,
     brown,
-    cream,
-    grey,
     green,
+    charcoal,
+    slate,
+    gunMetal,
+    lGreen
   ];
 
   static const Color primary = green;

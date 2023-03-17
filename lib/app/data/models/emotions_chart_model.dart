@@ -20,11 +20,13 @@ class EmotionsChartModel {
 class OneEmotion {
   int? id;
   String? description;
+  String? image;
 
-  OneEmotion({this.id, this.description});
+  OneEmotion({this.id, this.description, this.image});
 
   OneEmotion.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     description = json['description'];
+    image = json['image'];
   }
 }

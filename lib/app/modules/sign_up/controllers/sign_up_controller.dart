@@ -66,7 +66,7 @@ class SignUpController extends GetxController {
                 "birth_date": MahasFormat.dateToString(birthDayCon.value),
                 "email": emailCon.value,
                 "created_at": DateTime.now().toIso8601String(),
-                "profile_pic": "",
+                "profile_pic": null,
               },
             ).select();
             Helper.dialogSuccess(

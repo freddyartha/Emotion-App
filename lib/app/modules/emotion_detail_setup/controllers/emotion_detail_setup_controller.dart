@@ -163,68 +163,73 @@ class EmotionDetailSetupController extends GetxController {
                         ? EmptyComponent(
                             onPressed: () async => await getEmotionExecutor(),
                           )
-                        : Obx(
-                            () => ListView.separated(
-                              separatorBuilder: (context, index) =>
-                                  const Divider(height: 0),
-                              controller: ScrollController(),
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: lookUp.length,
-                              itemBuilder: (context, index) {
-                                return Obx(
-                                  () => ListTile(
-                                    onTap: () {
-                                      if (tileOnTap[index].data == false) {
-                                        tileOnTap[index].data = true;
-                                        selectedId.add(lookUp[index]);
-                                        qty.value++;
-                                      } else {
-                                        tileOnTap[index].data = false;
-                                        qty.value--;
-                                        selectedId.remove(lookUp[index]);
-                                      }
-                                    },
-                                    selectedTileColor:
-                                        MahasColors.primary.withOpacity(0.15),
-                                    selectedColor: MahasColors.dark,
-                                    selected: tileOnTap[index].data!,
-                                    horizontalTitleGap: 10,
-                                    leading: lookUp[index].image == ""
-                                        ? SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: ClipOval(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                child: const Icon(
-                                                  FontAwesomeIcons.faceSmile,
-                                                  color: MahasColors.dark,
-                                                  size: 30,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: ClipOval(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                child: Image.memory(
-                                                  stringToImage(
-                                                      lookUp[index].image!),
-                                                  fit: BoxFit.cover,
-                                                ),
+                        // : Obx(
+                        //     () =>
+                        : ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                const Divider(height: 0),
+                            controller: ScrollController(),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: lookUp.length,
+                            itemBuilder: (context, index) {
+                              return Obx(
+                                () => ListTile(
+                                  onTap: () {
+                                    if (tileOnTap[index].data == false) {
+                                      tileOnTap[index].data = true;
+                                      selectedId.add(lookUp[index]);
+                                      qty.value++;
+                                      print(tileOnTap[index].data);
+                                    } else {
+                                      tileOnTap[index].data = false;
+                                      qty.value--;
+                                      selectedId.remove(lookUp[index]);
+                                    }
+                                  },
+                                  selectedTileColor:
+                                      MahasColors.primary.withOpacity(0.15),
+                                  selectedColor: MahasColors.dark,
+                                  selected: tileOnTap[index].data!,
+                                  // tileColor: tileOnTap[index].data! == true
+                                  //     ? MahasColors.primary.withOpacity(0.15)
+                                  //     : Colors.transparent,
+                                  horizontalTitleGap: 5,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  leading: lookUp[index].image == null
+                                      ? SizedBox(
+                                          width: 50,
+                                          height: 50,
+                                          child: ClipOval(
+                                            child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              child: const Icon(
+                                                FontAwesomeIcons.faceSmile,
+                                                color: MahasColors.dark,
+                                                size: 30,
                                               ),
                                             ),
                                           ),
-                                    title: Text(lookUp[index].name!),
-                                  ),
-                                );
-                              },
-                            ),
+                                        )
+                                      : SizedBox(
+                                          width: 50,
+                                          height: 50,
+                                          child: ClipOval(
+                                            child: Container(
+                                              padding: const EdgeInsets.all(5),
+                                              child: Image.memory(
+                                                stringToImage(
+                                                    lookUp[index].image!),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                  title: Text(lookUp[index].name!),
+                                ),
+                              );
+                            },
+                            // ),
                           ),
                   ),
                 ),
@@ -267,7 +272,7 @@ class EmotionDetailSetupController extends GetxController {
     try {
       var response = await client
           .from("emotions_list")
-          .select('*, emotionslist_executant!inner (executant!inner (*))')
+          .select('*, emotionslist_executant!left (executant!left (*))')
           .match(
         {
           "user_uid": client.auth.currentUser!.id,
@@ -278,13 +283,14 @@ class EmotionDetailSetupController extends GetxController {
       emotions.refresh();
       titleCon.value = emotions.first.emotionTitle!;
       descCon.value = emotions.first.emotionDesc!;
-      getImage = emotions.first.images != null
-          ? stringToImage(emotions.first.images!)
-          : null;
-
+      if (emotions.first.images != null) {
+        getImage = stringToImage(emotions.first.images!);
+      }
       selectedId.clear();
-      for (var e in emotions.first.emotionslistExecutant!) {
-        selectedId.add(e.executant);
+      if (emotions.first.emotionslistExecutant!.isNotEmpty) {
+        for (var e in emotions.first.emotionslistExecutant!) {
+          selectedId.add(e.executant);
+        }
       }
       editable.value = false;
     } on PostgrestException catch (e) {
@@ -360,7 +366,7 @@ class EmotionDetailSetupController extends GetxController {
             "emotion_id": emotionId,
             "emotion_title": titleCon.value,
             "emotion_desc": descCon.value,
-            "images": image != null ? await convertImage(image!) : "",
+            "images": image != null ? await convertImage(image!) : null,
             "date_created": DateTime.now().toIso8601String(),
             "time_created": MahasFormat.timeToString(TimeOfDay.now()),
           },
@@ -417,6 +423,9 @@ class EmotionDetailSetupController extends GetxController {
   void clearImage() {
     if (image != null) {
       image = null;
+    }
+    if (getImage != null) {
+      getImage = null;
     }
     update();
   }

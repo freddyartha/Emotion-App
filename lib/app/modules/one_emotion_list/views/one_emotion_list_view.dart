@@ -51,44 +51,45 @@ class OneEmotionListView extends GetView<OneEmotionListController> {
           child: FutureBuilder(
             future: controller.getOneEmotionList(),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: EmptyComponent(),
-                );
-              } else {
-                return Obx(
-                  () => ListView.separated(
-                    itemCount: controller.emotion.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 0,
-                    ),
-                    itemBuilder: (context, index) {
-                      OneemotionModel emotion = controller.emotion[index];
-                      return ListTile(
-                        onTap: () =>
-                            controller.toOneEmotionDetailSetup(emotion.id!),
-                        horizontalTitleGap: 10,
-                        leading: emotion.image == null
-                            ? const Icon(FontAwesomeIcons.faceSmile)
-                            : SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: ClipOval(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Image.memory(
-                                      controller.convertImage(emotion.image!),
-                                      fit: BoxFit.cover,
+              return Obx(
+                () => controller.emotion.isEmpty
+                    ? EmptyComponent(
+                        onPressed: () => controller.getOneEmotionList(),
+                      )
+                    : ListView.separated(
+                        itemCount: controller.emotion.length,
+                        separatorBuilder: (context, index) => const Divider(
+                          height: 0,
+                        ),
+                        itemBuilder: (context, index) {
+                          OneemotionModel emotion = controller.emotion[index];
+                          return ListTile(
+                            onTap: () =>
+                                controller.toOneEmotionDetailSetup(emotion.id!),
+                            horizontalTitleGap: 5,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 10),
+                            leading: emotion.image == null
+                                ? const Icon(FontAwesomeIcons.faceSmile)
+                                : SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: ClipOval(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Image.memory(
+                                          controller
+                                              .convertImage(emotion.image!),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                        title: Text(emotion.description!),
-                      );
-                    },
-                  ),
-                );
-              }
+                            title: Text(emotion.description!),
+                          );
+                        },
+                      ),
+              );
             },
           ),
         ),

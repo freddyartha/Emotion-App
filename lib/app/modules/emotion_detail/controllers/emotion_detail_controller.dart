@@ -61,7 +61,7 @@ class EmotionDetailController extends GetxController {
       var response = await client
           .from("emotions_list")
           .select(
-              '*, one_emotion(description), emotionslist_executant!inner (executant!inner (name))')
+              '*, one_emotion(description), emotionslist_executant!left (executant!left (name))')
           .match(
         {
           "user_uid": client.auth.currentUser!.id,

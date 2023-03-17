@@ -78,7 +78,9 @@ class ExecutantSetupController extends GetxController {
       var dataGet = ExecutantModel.fromDynamicList(resGet);
       descCon.value = dataGet.first.description;
       nameCon.value = dataGet.first.name;
-      getImage = stringToImage(dataGet.first.image!);
+      if (getImage != null) {
+        getImage = stringToImage(dataGet.first.image!);
+      }
       update();
       itemID.value = dataGet.first.id!;
     } on PostgrestException catch (e) {
@@ -101,7 +103,7 @@ class ExecutantSetupController extends GetxController {
         {
           "name": nameCon.value,
           "description": descCon.value,
-          "image": image != null ? await convertImage(image!) : "",
+          "image": image != null ? await convertImage(image!) : null,
           "updated_at": DateTime.now().toIso8601String()
         },
       ).match(
@@ -120,7 +122,7 @@ class ExecutantSetupController extends GetxController {
             "user_uid": client.auth.currentUser!.id,
             "name": nameCon.value,
             "description": descCon.value,
-            "image": image != null ? await convertImage(image!) : "",
+            "image": image != null ? await convertImage(image!) : null,
             "created_at": DateTime.now().toIso8601String(),
           },
         ).select();

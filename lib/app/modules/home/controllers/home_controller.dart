@@ -21,6 +21,7 @@ class HomeController extends GetxController {
   RxList<Map<String, dynamic>> emotionCount = <Map<String, dynamic>>[].obs;
   RxList<EmotionsChartModel> emotions = <EmotionsChartModel>[].obs;
   RxBool loadData = false.obs;
+
   Uint8List? getImage;
 
   void toProfile() {
@@ -34,6 +35,10 @@ class HomeController extends GetxController {
 
   Future goToSettingsList() async {
     Get.toNamed(Routes.SETTINGS_LIST);
+  }
+
+  void addOneEmotionOnPressed() {
+    Get.toNamed(Routes.ONE_EMOTION_SETUP);
   }
 
   Future getUser() async {
@@ -81,7 +86,7 @@ class HomeController extends GetxController {
       );
       List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
       listEmotion.assignAll(datas);
-      loadData.value = true;
+      // loadData.value = true;
       await getEmotionsList();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
@@ -104,7 +109,7 @@ class HomeController extends GetxController {
     try {
       var response = await client
           .from("emotions_list")
-          .select('emotion_title, one_emotion(id, description))')
+          .select('emotion_title, one_emotion(id, description, image))')
           .match(
         {
           "user_uid": client.auth.currentUser!.id,
@@ -128,7 +133,8 @@ class HomeController extends GetxController {
           Map<String, dynamic> countMap = {
             'id': e.oneEmotion!.id,
             'count': 1,
-            'title': e.oneEmotion!.description
+            'title': e.oneEmotion!.description,
+            'image': e.oneEmotion!.image
           };
           emotionCount.add(countMap);
         }
@@ -147,6 +153,7 @@ class HomeController extends GetxController {
           index = 0;
         }
       }
+      loadData.value = true;
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
         e.toString(),
@@ -169,11 +176,4 @@ class HomeController extends GetxController {
     Uint8List ul = Uint8List.fromList(byte);
     return ul;
   }
-}
-
-class EmotionCount {
-  int? id;
-  int? count;
-
-  EmotionCount(this.id, this.count);
 }

@@ -15,6 +15,8 @@ class SettingsListView extends GetView<SettingsListController> {
       ),
       body: ListView.separated(
         itemBuilder: (context, i) => ListTile(
+          horizontalTitleGap: 5,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
           title: Text(controller.menus[i].title),
           leading: Icon(
             controller.menus[i].icon,

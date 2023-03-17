@@ -51,56 +51,60 @@ class ExecutantListView extends GetView<ExecutantListController> {
           child: FutureBuilder(
             future: controller.getExecutantList(),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: EmptyComponent(),
-                );
-              } else {
-                return Obx(
-                  () => ListView.separated(
-                    itemCount: controller.executant.length,
-                    separatorBuilder: (context, index) => const Divider(
-                      height: 0,
-                    ),
-                    itemBuilder: (context, index) {
-                      ExecutantModel executant = controller.executant[index];
-                      return ListTile(
-                        onTap: () =>
-                            controller.toExecutantDetailSetup(executant.id!),
-                        horizontalTitleGap: 10,
-                        leading: executant.image == ""
-                            ? SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: ClipOval(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(5),
-                                    child: const Icon(
-                                      FontAwesomeIcons.faceSmile,
-                                      size: 30,
+              return Obx(
+                () => controller.executant.isEmpty
+                    ? Center(
+                        child: EmptyComponent(
+                          onPressed: () => controller.getExecutantList(),
+                        ),
+                      )
+                    : ListView.separated(
+                        itemCount: controller.executant.length,
+                        separatorBuilder: (context, index) => const Divider(
+                          height: 0,
+                        ),
+                        itemBuilder: (context, index) {
+                          ExecutantModel executant =
+                              controller.executant[index];
+                          return ListTile(
+                            onTap: () => controller
+                                .toExecutantDetailSetup(executant.id!),
+                            horizontalTitleGap: 5,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 10),
+                            leading: executant.image == null
+                                ? SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: ClipOval(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        child: const Icon(
+                                          FontAwesomeIcons.faceSmile,
+                                          size: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: ClipOval(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Image.memory(
+                                          controller
+                                              .convertImage(executant.image!),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: ClipOval(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(5),
-                                    child: Image.memory(
-                                      controller.convertImage(executant.image!),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                        title: Text(executant.name!),
-                      );
-                    },
-                  ),
-                );
-              }
+                            title: Text(executant.name!),
+                          );
+                        },
+                      ),
+              );
             },
           ),
         ),
