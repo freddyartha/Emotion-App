@@ -59,7 +59,7 @@ class ExecutantSetupView extends GetView<ExecutantSetupController> {
                 InputTextComponent(
                   controller: controller.nameCon,
                   required: true,
-                  label: "Emotion Executor Name",
+                  label: "Name",
                   editable: controller.editable.value,
                 ),
                 InputTextComponent(
@@ -68,7 +68,7 @@ class ExecutantSetupView extends GetView<ExecutantSetupController> {
                   editable: controller.editable.value,
                 ),
                 Text(
-                  "Emotion Executor Image",
+                  "Image",
                   style: MahasThemes.mutedNormal,
                 ),
                 const SizedBox(

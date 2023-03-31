@@ -62,9 +62,18 @@ class OneEmotionSetupView extends GetView<OneEmotionSetupController> {
                   label: "Emotion Name",
                   editable: controller.editable.value,
                 ),
-                Text(
-                  "Emotion Image",
-                  style: MahasThemes.mutedNormal,
+                Row(
+                  children: [
+                    Text(
+                      "Emotion Image",
+                      style: MahasThemes.mutedNormal,
+                    ),
+                    Text(
+                      "*",
+                      style:
+                          MahasThemes.blackNormal.copyWith(color: Colors.red),
+                    ),
+                  ],
                 ),
                 Visibility(
                   visible: controller.imageRequired.value,

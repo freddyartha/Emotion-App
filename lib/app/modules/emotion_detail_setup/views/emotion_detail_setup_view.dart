@@ -69,6 +69,13 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                   label: "Description",
                   editable: controller.editable.value,
                 ),
+                Text(
+                  "Who Made Your Emotion",
+                  style: MahasThemes.mutedNormal,
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
                 Obx(
                   () => controller.selectedId.isEmpty &&
                           controller.editable.isTrue
@@ -142,42 +149,6 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                                         ),
                                       ),
                                     ),
-                                    // itemBuilder: (context, index) => SizedBox(
-                                    //   height: 30,
-                                    //   child: Row(
-                                    //     children: [
-                                    //       Expanded(
-                                    //         child: SizedBox(
-                                    //           child: Text(controller
-                                    //               .selectedId[index].name!),
-                                    //         ),
-                                    //       ),
-                                    //       InkWell(
-                                    //         onTap: () {
-                                    //           controller.selectedId
-                                    //               .remove([index]);
-                                    //           controller.tileOnTap[index].data =
-                                    //               false;
-                                    //           controller.qty--;
-                                    //         },
-                                    //         child: Obx(
-                                    //           () => Visibility(
-                                    //             visible:
-                                    //                 controller.editable.value,
-                                    //             child: const SizedBox(
-                                    //               height: 30,
-                                    //               width: 50,
-                                    //               child: Icon(
-                                    //                 Icons.delete_forever,
-                                    //                 color: MahasColors.red,
-                                    //               ),
-                                    //             ),
-                                    //           ),
-                                    //         ),
-                                    //       )
-                                    //     ],
-                                    //   ),
-                                    // ),
                                     separatorBuilder: (context, index) =>
                                         const Divider(height: 0),
                                     itemCount: controller.selectedId.length,
@@ -210,6 +181,13 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                 ),
                 const SizedBox(
                   height: 20,
+                ),
+                Text(
+                  "Image",
+                  style: MahasThemes.mutedNormal,
+                ),
+                const SizedBox(
+                  height: 3,
                 ),
                 GetBuilder<EmotionDetailSetupController>(
                   builder: (c) => Column(

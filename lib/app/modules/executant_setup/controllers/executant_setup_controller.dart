@@ -46,7 +46,7 @@ class ExecutantSetupController extends GetxController {
       isEdit.value = true;
     } else if (v == 'delete') {
       Helper.dialogQuestionWithAction(
-        message: "Are you sure want to delete this data?",
+        message: "Are you sure want to delete \nthis data?",
         textConfirm: "YES",
         textCancel: "NO",
         confirmAction: () => deleteOnPressed(itemID.value),
@@ -141,19 +141,29 @@ class ExecutantSetupController extends GetxController {
   }
 
   void deleteOnPressed(int id) async {
-    if (EasyLoading.isShow) return;
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
     EasyLoading.show();
     Get.back(result: true);
     try {
-      await client.from("executant").delete().match({"id": id});
+      await client
+          .from("emotionslist_executant")
+          .delete()
+          .match({"executant_id": id})
+          .then((value) async =>
+              await client.from("executant").delete().match({"id": id}))
+          .then((value) async {
+            executantC.executant.clear();
+            await executantC.getExecutantList();
+          })
+          .then((value) => Get.back(closeOverlays: true));
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());
     } catch (e) {
       Helper.dialogWarning(e.toString());
     }
-
     EasyLoading.dismiss();
-    Get.back(closeOverlays: true);
   }
 
   void fromGallery() async {

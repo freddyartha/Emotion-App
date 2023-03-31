@@ -50,10 +50,10 @@ class SettingsListController extends GetxController {
 
   @override
   void onInit() {
-    menus.add(MenuItemModel('Add Who Made Your Emotion',
-        FontAwesomeIcons.peopleGroup, cExecutantList));
     menus.add(MenuItemModel(
-        'Add an Emotion', FontAwesomeIcons.faceSmile, cOneEmotionList));
+        'Who Made Your Emotion', FontAwesomeIcons.peopleGroup, cExecutantList));
+    menus.add(
+        MenuItemModel('Emotion', FontAwesomeIcons.faceSmile, cOneEmotionList));
     menus.add(MenuItemModel(
         'Edit Profile', FontAwesomeIcons.userAstronaut, cProfile));
     menus.add(
