@@ -10,7 +10,7 @@ class SettingsListView extends GetView<SettingsListController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Informasi'),
+        title: const Text('Setting'),
         centerTitle: true,
       ),
       body: ListView.separated(

@@ -115,8 +115,8 @@ class EmotionDetailSetupController extends GetxController {
       }
       if (tileOnTap.isNotEmpty) {
         for (var e in tileOnTap) {
-          for (int i = 0; i < selectedId.length; i++) {
-            if (e.id == selectedId[i].id) {
+          for (var s in selectedId) {
+            if (e.id == s.id) {
               e.data = true;
               qty++;
             }
@@ -163,8 +163,6 @@ class EmotionDetailSetupController extends GetxController {
                         ? EmptyComponent(
                             onPressed: () async => await getEmotionExecutor(),
                           )
-                        // : Obx(
-                        //     () =>
                         : ListView.separated(
                             separatorBuilder: (context, index) =>
                                 const Divider(height: 0),
@@ -172,27 +170,24 @@ class EmotionDetailSetupController extends GetxController {
                             physics: const AlwaysScrollableScrollPhysics(),
                             itemCount: lookUp.length,
                             itemBuilder: (context, index) {
-                              return Obx(
-                                () => ListTile(
+                              return GetBuilder<EmotionDetailSetupController>(
+                                builder: (c) => ListTile(
                                   onTap: () {
                                     if (tileOnTap[index].data == false) {
                                       tileOnTap[index].data = true;
                                       selectedId.add(lookUp[index]);
                                       qty.value++;
-                                      print(tileOnTap[index].data);
                                     } else {
                                       tileOnTap[index].data = false;
                                       qty.value--;
                                       selectedId.remove(lookUp[index]);
                                     }
+                                    update();
                                   },
                                   selectedTileColor:
                                       MahasColors.primary.withOpacity(0.15),
                                   selectedColor: MahasColors.dark,
                                   selected: tileOnTap[index].data!,
-                                  // tileColor: tileOnTap[index].data! == true
-                                  //     ? MahasColors.primary.withOpacity(0.15)
-                                  //     : Colors.transparent,
                                   horizontalTitleGap: 5,
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 10),
@@ -229,7 +224,6 @@ class EmotionDetailSetupController extends GetxController {
                                 ),
                               );
                             },
-                            // ),
                           ),
                   ),
                 ),
@@ -326,20 +320,11 @@ class EmotionDetailSetupController extends GetxController {
           {"id": itemId},
         ).select();
         var dataPost = EmotionsModel.fromJsonList(res);
-        var data = await client.from('emotionslist_executant').select().match(
-          {
-            "emotionslist_id": itemId,
-          },
-        );
-        if (data != null) {
-          for (var e in data) {
-            for (int i = 0; i < selectedId.length; i++) {
-              selectedId
-                  .removeWhere((element) => element.id == e['executant_id']);
-            }
-          }
-        }
         if (selectedId.isNotEmpty) {
+          await client
+              .from('emotionslist_executant')
+              .delete()
+              .match({'emotionslist_id': dataPost.first.id});
           for (var e in selectedId) {
             await client.from('emotionslist_executant').insert(
               {
@@ -348,6 +333,11 @@ class EmotionDetailSetupController extends GetxController {
               },
             );
           }
+        } else {
+          await client
+              .from('emotionslist_executant')
+              .delete()
+              .match({'emotionslist_id': dataPost.first.id});
         }
         await getData(itemId.value);
         editable.value = false;

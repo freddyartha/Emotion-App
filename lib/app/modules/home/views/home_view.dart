@@ -125,16 +125,19 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "What's your feeling today?",
-                                style: MahasThemes.whiteH2,
-                                overflow: TextOverflow.visible,
-                                maxLines: 2,
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  "What's your feeling today?",
+                                  style: MahasThemes.whiteH2,
+                                  overflow: TextOverflow.visible,
+                                  maxLines: 2,
+                                ),
                               ),
                               const SizedBox(
                                 height: 10,
@@ -168,8 +171,8 @@ class HomeView extends GetView<HomeController> {
                                           radius: const Radius.circular(10),
                                           child: ListView.separated(
                                             shrinkWrap: true,
-                                            physics:
-                                                const AlwaysScrollableScrollPhysics(),
+                                            // physics:
+                                            //     const AlwaysScrollableScrollPhysics(),
                                             scrollDirection: Axis.horizontal,
                                             itemBuilder: (context, index) {
                                               return Obx(

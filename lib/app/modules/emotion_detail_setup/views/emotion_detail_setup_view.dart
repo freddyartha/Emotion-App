@@ -99,49 +99,89 @@ class EmotionDetailSetupView extends GetView<EmotionDetailSetupController> {
                           child: Column(
                             children: [
                               SizedBox(
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(
-                                      parent: NeverScrollableScrollPhysics()),
-                                  itemBuilder: (context, index) => SizedBox(
-                                    height: 30,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: SizedBox(
-                                            child: Text(controller
-                                                .selectedId[index].name!),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            controller.selectedId
-                                                .remove([index]);
-                                            controller.tileOnTap[index].data =
-                                                false;
-                                            controller.qty--;
-                                          },
-                                          child: Obx(
-                                            () => Visibility(
-                                              visible:
-                                                  controller.editable.value,
-                                              child: const SizedBox(
-                                                height: 30,
-                                                width: 50,
-                                                child: Icon(
-                                                  Icons.delete_forever,
-                                                  color: MahasColors.red,
-                                                ),
+                                child: GetBuilder<EmotionDetailSetupController>(
+                                  builder: (c) => ListView.separated(
+                                    shrinkWrap: true,
+                                    physics: const ScrollPhysics(
+                                        parent: NeverScrollableScrollPhysics()),
+                                    itemBuilder: (context, index) => ListTile(
+                                      visualDensity:
+                                          const VisualDensity(vertical: -4),
+                                      title: Text(
+                                          controller.selectedId[index].name!),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                      horizontalTitleGap: 0,
+                                      trailing: InkWell(
+                                        onTap: () {
+                                          for (var e in controller.tileOnTap) {
+                                            if (controller
+                                                    .selectedId[index].id ==
+                                                e.id) {
+                                              e.data = false;
+                                            }
+                                          }
+                                          controller.selectedId.remove(
+                                              controller.selectedId[index]);
+                                          controller.qty.value--;
+                                          c.update();
+                                        },
+                                        child: Obx(
+                                          () => Visibility(
+                                            visible: controller.editable.value,
+                                            child: const SizedBox(
+                                              height: 30,
+                                              width: 50,
+                                              child: Icon(
+                                                Icons.delete_forever,
+                                                color: MahasColors.red,
                                               ),
                                             ),
                                           ),
-                                        )
-                                      ],
+                                        ),
+                                      ),
                                     ),
+                                    // itemBuilder: (context, index) => SizedBox(
+                                    //   height: 30,
+                                    //   child: Row(
+                                    //     children: [
+                                    //       Expanded(
+                                    //         child: SizedBox(
+                                    //           child: Text(controller
+                                    //               .selectedId[index].name!),
+                                    //         ),
+                                    //       ),
+                                    //       InkWell(
+                                    //         onTap: () {
+                                    //           controller.selectedId
+                                    //               .remove([index]);
+                                    //           controller.tileOnTap[index].data =
+                                    //               false;
+                                    //           controller.qty--;
+                                    //         },
+                                    //         child: Obx(
+                                    //           () => Visibility(
+                                    //             visible:
+                                    //                 controller.editable.value,
+                                    //             child: const SizedBox(
+                                    //               height: 30,
+                                    //               width: 50,
+                                    //               child: Icon(
+                                    //                 Icons.delete_forever,
+                                    //                 color: MahasColors.red,
+                                    //               ),
+                                    //             ),
+                                    //           ),
+                                    //         ),
+                                    //       )
+                                    //     ],
+                                    //   ),
+                                    // ),
+                                    separatorBuilder: (context, index) =>
+                                        const Divider(height: 0),
+                                    itemCount: controller.selectedId.length,
                                   ),
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(height: 0),
-                                  itemCount: controller.selectedId.length,
                                 ),
                               ),
                               Obx(
