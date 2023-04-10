@@ -16,7 +16,8 @@ import '../../one_emotion_list/controllers/one_emotion_list_controller.dart';
 class OneEmotionSetupController extends GetxController {
   final InputTextController descCon = InputTextController();
 
-  final oneEmotionC = Get.find<OneEmotionListController>();
+  // final oneEmotionC = Get.find<OneEmotionListController>();
+  late OneEmotionListController oneEmotionC;
   final ImagePicker picker = ImagePicker();
   XFile? image;
   Uint8List? getImage;
@@ -33,7 +34,10 @@ class OneEmotionSetupController extends GetxController {
 
   @override
   void onInit() async {
-    detailId.value = Get.parameters['id']!;
+    oneEmotionC = Get.isRegistered<OneEmotionListController>()
+        ? Get.find<OneEmotionListController>()
+        : Get.put(OneEmotionListController());
+    detailId.value = Get.parameters['id'] ?? '';
     if (detailId.value != "") {
       await getData(int.parse(detailId.value));
     }
@@ -92,7 +96,7 @@ class OneEmotionSetupController extends GetxController {
   Future submitOnPressed(bool edit) async {
     if (!descCon.isValid) return false;
     if (image == null) {
-      imageRequired.toggle();
+      imageRequired.value = true;
       return false;
     }
 
@@ -134,7 +138,7 @@ class OneEmotionSetupController extends GetxController {
         Helper.dialogWarning(e.toString());
       }
 
-      imageRequired.toggle();
+      imageRequired.value = false;
       EasyLoading.dismiss();
       Helper.dialogSuccess("Created Successfully!");
     }
@@ -147,11 +151,10 @@ class OneEmotionSetupController extends GetxController {
     EasyLoading.show();
     Get.back(result: true);
     try {
-      print("masih perlu diperbaiki");
       await client
           .from("emotionslist_executant")
           .delete()
-          .match({"executant_id": id})
+          .match({"emotionslist_emotion_id": id})
           .then((value) async => await client
               .from("emotions_list")
               .delete()

@@ -329,6 +329,7 @@ class EmotionDetailSetupController extends GetxController {
             await client.from('emotionslist_executant').insert(
               {
                 "emotionslist_id": dataPost.first.id,
+                "emotionslist_emotion_id": emotionId,
                 "executant_id": e.id,
               },
             );
@@ -367,6 +368,7 @@ class EmotionDetailSetupController extends GetxController {
             await client.from('emotionslist_executant').insert(
               {
                 "emotionslist_id": dataPost.first.id,
+                "emotionslist_emotion_id": emotionId,
                 "executant_id": e.id,
               },
             );

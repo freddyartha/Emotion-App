@@ -36,7 +36,9 @@ class OneEmotionListController extends GetxController {
   }
 
   Future getOneEmotionList() async {
-    if (EasyLoading.isShow) return false;
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
     await EasyLoading.show();
     try {
       var response = await client
