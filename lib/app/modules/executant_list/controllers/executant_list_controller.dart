@@ -23,7 +23,8 @@ class ExecutantListController extends GetxController {
 
   void popupMenuButtonOnSelected(String v) async {
     if (v == 'add') {
-      Get.toNamed(Routes.EXECUTANT_SETUP, parameters: {"id": ""});
+      Get.toNamed(Routes.EXECUTANT_SETUP, parameters: {"id": ""})
+          ?.then((value) async => await getExecutantList());
     }
   }
 
@@ -32,7 +33,8 @@ class ExecutantListController extends GetxController {
   }
 
   void toExecutantDetailSetup(int id) {
-    Get.toNamed(Routes.EXECUTANT_SETUP, parameters: {"id": id.toString()});
+    Get.toNamed(Routes.EXECUTANT_SETUP, parameters: {"id": id.toString()})
+        ?.then((value) async => await getExecutantList());
   }
 
   Future getExecutantList() async {
@@ -48,7 +50,7 @@ class ExecutantListController extends GetxController {
           )
           .order("created_at");
       List<ExecutantModel> datas = ExecutantModel.fromDynamicList(response);
-      executant(datas);
+      executant.assignAll(datas);
       executant.refresh();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(

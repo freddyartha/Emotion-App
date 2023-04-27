@@ -25,7 +25,13 @@ class HomeController extends GetxController {
   Uint8List? getImage;
 
   void toProfile() {
-    Get.toNamed(Routes.PROFILE);
+    Get.toNamed(Routes.PROFILE)?.then((value) async => await getUser());
+  }
+
+  void toEmotionDetail(String emotion, String id) {
+    Get.toNamed(Routes.EMOTION_DETAIL,
+            parameters: {"emotion": emotion, "id": id})
+        ?.then((value) async => await getUser());
   }
 
   Future<void> onRefresh() async {
@@ -34,11 +40,12 @@ class HomeController extends GetxController {
   }
 
   Future goToSettingsList() async {
-    Get.toNamed(Routes.SETTINGS_LIST);
+    Get.toNamed(Routes.SETTINGS_LIST)?.then((value) async => await getUser());
   }
 
   void addOneEmotionOnPressed() {
-    Get.toNamed(Routes.ONE_EMOTION_SETUP);
+    Get.toNamed(Routes.ONE_EMOTION_SETUP)
+        ?.then((value) async => await getUser());
   }
 
   Future getUser() async {
@@ -86,7 +93,6 @@ class HomeController extends GetxController {
       );
       List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
       listEmotion.assignAll(datas);
-      // loadData.value = true;
       await getEmotionsList();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
@@ -164,11 +170,6 @@ class HomeController extends GetxController {
       );
     }
     EasyLoading.dismiss();
-  }
-
-  void toEmotionDetail(String emotion, String id) {
-    Get.toNamed(Routes.EMOTION_DETAIL,
-        parameters: {"emotion": emotion, "id": id});
   }
 
   Uint8List stringToImage(String imageValue) {

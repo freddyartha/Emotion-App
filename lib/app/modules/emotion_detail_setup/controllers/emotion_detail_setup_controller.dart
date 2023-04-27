@@ -17,14 +17,12 @@ import '../../../data/models/emotions_model.dart';
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/mahas_colors.dart';
 import '../../../mahas/services/helper.dart';
-import '../../emotion_detail/controllers/emotion_detail_controller.dart';
 
 class EmotionDetailSetupController extends GetxController {
   final InputTextController titleCon = InputTextController();
   final InputTextController descCon =
       InputTextController(type: InputTextType.paragraf);
 
-  final listEmotionC = Get.find<EmotionDetailController>();
   final ImagePicker picker = ImagePicker();
   XFile? image;
   Uint8List? getImage;
@@ -79,7 +77,6 @@ class EmotionDetailSetupController extends GetxController {
     Helper.dialogQuestionWithAction(
       message: "Are you sure want to go back?",
       confirmAction: () async {
-        await listEmotionC.getData(emotionId);
         Get.back(closeOverlays: true);
       },
     );
@@ -90,7 +87,6 @@ class EmotionDetailSetupController extends GetxController {
     Helper.dialogQuestionWithAction(
       message: "Are you sure want to go back?",
       confirmAction: () async {
-        // await listEmotionC.getData(emotionId);
         Get.back(closeOverlays: true);
       },
     );
@@ -399,10 +395,6 @@ class EmotionDetailSetupController extends GetxController {
           .match({"emotionslist_id": id})
           .then((value) async =>
               await client.from("emotions_list").delete().match({"id": id}))
-          .then((value) async {
-            listEmotionC.emotions.clear();
-            await listEmotionC.getData(emotionId);
-          })
           .then((value) => Get.back(closeOverlays: true));
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());

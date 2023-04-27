@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:emotion_app/app/data/models/executant_model.dart';
-import 'package:emotion_app/app/modules/executant_list/controllers/executant_list_controller.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +16,6 @@ class ExecutantSetupController extends GetxController {
   final InputTextController descCon =
       InputTextController(type: InputTextType.paragraf);
 
-  final executantC = Get.find<ExecutantListController>();
   final ImagePicker picker = ImagePicker();
   XFile? image;
   Uint8List? getImage;
@@ -58,7 +56,6 @@ class ExecutantSetupController extends GetxController {
     Helper.dialogQuestionWithAction(
       message: "Are you sure want to go back?",
       confirmAction: () async {
-        await executantC.getExecutantList();
         Get.back(closeOverlays: true);
       },
     );
@@ -153,10 +150,6 @@ class ExecutantSetupController extends GetxController {
           .match({"executant_id": id})
           .then((value) async =>
               await client.from("executant").delete().match({"id": id}))
-          .then((value) async {
-            executantC.executant.clear();
-            await executantC.getExecutantList();
-          })
           .then((value) => Get.back(closeOverlays: true));
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());

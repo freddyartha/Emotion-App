@@ -23,7 +23,8 @@ class OneEmotionListController extends GetxController {
 
   void popupMenuButtonOnSelected(String v) async {
     if (v == 'add') {
-      Get.toNamed(Routes.ONE_EMOTION_SETUP, parameters: {"id": ""});
+      Get.toNamed(Routes.ONE_EMOTION_SETUP, parameters: {"id": ""})
+          ?.then((value) async => await getOneEmotionList());
     }
   }
 
@@ -32,7 +33,8 @@ class OneEmotionListController extends GetxController {
   }
 
   void toOneEmotionDetailSetup(int id) {
-    Get.toNamed(Routes.ONE_EMOTION_SETUP, parameters: {"id": id.toString()});
+    Get.toNamed(Routes.ONE_EMOTION_SETUP, parameters: {"id": id.toString()})
+        ?.then((value) async => await getOneEmotionList());
   }
 
   Future getOneEmotionList() async {
@@ -50,7 +52,7 @@ class OneEmotionListController extends GetxController {
           )
           .order("created_at");
       List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
-      emotion(datas);
+      emotion.assignAll(datas);
       emotion.refresh();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(

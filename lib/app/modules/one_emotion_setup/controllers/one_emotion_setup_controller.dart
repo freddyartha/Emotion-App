@@ -16,7 +16,6 @@ import '../../one_emotion_list/controllers/one_emotion_list_controller.dart';
 class OneEmotionSetupController extends GetxController {
   final InputTextController descCon = InputTextController();
 
-  // final oneEmotionC = Get.find<OneEmotionListController>();
   late OneEmotionListController oneEmotionC;
   final ImagePicker picker = ImagePicker();
   XFile? image;
@@ -62,7 +61,6 @@ class OneEmotionSetupController extends GetxController {
     Helper.dialogQuestionWithAction(
       message: "Are you sure want to go back?",
       confirmAction: () async {
-        await oneEmotionC.getOneEmotionList();
         Get.back(closeOverlays: true);
       },
     );
@@ -96,23 +94,38 @@ class OneEmotionSetupController extends GetxController {
   Future submitOnPressed(bool edit) async {
     if (!descCon.isValid) return false;
     if (image == null) {
-      imageRequired.value = true;
-      return false;
+      if (getImage == null) {
+        imageRequired.value = true;
+        return false;
+      }
     }
 
     if (EasyLoading.isShow) return false;
     EasyLoading.show();
 
     if (edit == true) {
-      var res = await client.from("one_emotion").update(
-        {
-          "description": descCon.value,
-          "image": await convertImage(image!),
-          "updated_at": DateTime.now().toIso8601String()
-        },
-      ).match(
-        {"id": itemID},
-      ).select();
+      dynamic res;
+      if (image != null) {
+        res = await client.from("one_emotion").update(
+          {
+            "description": descCon.value,
+            "image": await convertImage(image!),
+            "updated_at": DateTime.now().toIso8601String()
+          },
+        ).match(
+          {"id": itemID},
+        ).select();
+      } else {
+        res = await client.from("one_emotion").update(
+          {
+            "description": descCon.value,
+            "updated_at": DateTime.now().toIso8601String()
+          },
+        ).match(
+          {"id": itemID},
+        ).select();
+      }
+
       editable.value = false;
       isEdit.value = false;
       var dataPost = OneemotionModel.fromDynamicList(res);
@@ -161,10 +174,6 @@ class OneEmotionSetupController extends GetxController {
               .match({"emotion_id": id}))
           .then((value) async =>
               await client.from("one_emotion").delete().match({"id": id}))
-          .then((value) async {
-            oneEmotionC.emotion.clear();
-            await oneEmotionC.getOneEmotionList();
-          })
           .then((value) => Get.back(closeOverlays: true));
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());

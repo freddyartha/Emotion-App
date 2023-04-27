@@ -38,7 +38,7 @@ class EmotionDetailController extends GetxController {
         "emotion": emotionCon,
         "emotionId": emotionId.toString(),
         "isAdd": "yes"
-      });
+      })?.then((value) async => await getData(emotionId));
     }
   }
 
@@ -51,7 +51,7 @@ class EmotionDetailController extends GetxController {
       "emotion": emotionCon,
       "itemId": id.toString(),
       "emotionId": emotionId.toString()
-    });
+    })?.then((value) async => await getData(emotionId));
   }
 
   Future getData(int emotionId) async {
@@ -70,7 +70,7 @@ class EmotionDetailController extends GetxController {
       ).order("date_created");
 
       List<EmotionsModel> datas = EmotionsModel.fromJsonList(response);
-      emotions(datas);
+      emotions.assignAll(datas);
       emotions.refresh();
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
