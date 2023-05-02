@@ -161,10 +161,10 @@ class OneEmotionSetupController extends GetxController {
     if (EasyLoading.isShow) {
       EasyLoading.dismiss();
     }
-    EasyLoading.show();
-    Get.back(result: true);
+    await EasyLoading.show();
+
     try {
-      await client
+      var result = await client
           .from("emotionslist_executant")
           .delete()
           .match({"emotionslist_emotion_id": id})
@@ -173,14 +173,20 @@ class OneEmotionSetupController extends GetxController {
               .delete()
               .match({"emotion_id": id}))
           .then((value) async =>
-              await client.from("one_emotion").delete().match({"id": id}))
-          .then((value) => Get.back(closeOverlays: true));
+              await client.from("one_emotion").delete().match({"id": id}));
+      await EasyLoading.dismiss();
+      if (result == null) {
+        Get.back(
+          closeOverlays: true,
+          result: true,
+        );
+      }
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());
     } catch (e) {
       Helper.dialogWarning(e.toString());
     }
-    EasyLoading.dismiss();
+    await EasyLoading.dismiss();
   }
 
   void fromGallery() async {

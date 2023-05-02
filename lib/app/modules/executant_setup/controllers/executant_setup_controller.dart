@@ -141,22 +141,26 @@ class ExecutantSetupController extends GetxController {
     if (EasyLoading.isShow) {
       EasyLoading.dismiss();
     }
-    EasyLoading.show();
-    Get.back(result: true);
+    await EasyLoading.show();
     try {
-      await client
+      var result = await client
           .from("emotionslist_executant")
           .delete()
-          .match({"executant_id": id})
-          .then((value) async =>
-              await client.from("executant").delete().match({"id": id}))
-          .then((value) => Get.back(closeOverlays: true));
+          .match({"executant_id": id}).then((value) async =>
+              await client.from("executant").delete().match({"id": id}));
+      await EasyLoading.dismiss();
+      if (result == null) {
+        Get.back(
+          closeOverlays: true,
+          result: true,
+        );
+      }
     } on PostgrestException catch (e) {
       Helper.dialogWarning(e.toString());
     } catch (e) {
       Helper.dialogWarning(e.toString());
     }
-    EasyLoading.dismiss();
+    await EasyLoading.dismiss();
   }
 
   void fromGallery() async {
