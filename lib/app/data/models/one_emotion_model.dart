@@ -29,6 +29,17 @@ class OneemotionModel {
     return model;
   }
 
+  Map<String, dynamic> oneEmotiontoMap() {
+    return {
+      'id': id,
+      'image': image,
+      'description': description,
+      'created_at': MahasFormat.dateToString(createdAt),
+      'updated_at': MahasFormat.dateToString(updatedAt),
+      'user_uid': userUid
+    };
+  }
+
   static List<OneemotionModel> fromJsonList(List? data) {
     if (data == null || data.isEmpty) return [];
     return data.map((e) => OneemotionModel.fromJson(e)).toList();

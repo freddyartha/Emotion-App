@@ -11,6 +11,13 @@ class EmotionsChartModel {
         : null;
   }
 
+  Map<String, dynamic> emotionsListtoMap() {
+    return {
+      'emotion_title': emotionTitle,
+      'one_emotion': oneEmotion?.oneEmotionsListtoMap()
+    };
+  }
+
   static List<EmotionsChartModel> fromJsonList(List? data) {
     if (data == null || data.isEmpty) return [];
     return data.map((e) => EmotionsChartModel.fromJson(e)).toList();
@@ -28,5 +35,13 @@ class OneEmotion {
     id = json['id'];
     description = json['description'];
     image = json['image'];
+  }
+
+  Map<String, dynamic> oneEmotionsListtoMap() {
+    return {
+      'id': id,
+      'description': description,
+      'image': image,
+    };
   }
 }

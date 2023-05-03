@@ -46,6 +46,20 @@ class Users {
     profilePic = json['profile_pic'];
   }
 
+  Map<String, dynamic> userstoMap() {
+    return {
+      'id': id,
+      'user_uid': userUid,
+      'name': name,
+      'address': address,
+      'sex': sex,
+      'birth_date': MahasFormat.dateToString(birthDate),
+      'email': email,
+      'created_at': MahasFormat.dateToString(createdAt),
+      'profile_pic': profilePic
+    };
+  }
+
   static List<Users> fromJsonList(List? data) {
     if (data == null || data.isEmpty) return [];
     return data.map((e) => Users.fromJson(e)).toList();
