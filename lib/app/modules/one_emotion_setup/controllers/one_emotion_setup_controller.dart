@@ -11,12 +11,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/services/helper.dart';
-import '../../one_emotion_list/controllers/one_emotion_list_controller.dart';
 
 class OneEmotionSetupController extends GetxController {
   final InputTextController descCon = InputTextController();
 
-  late OneEmotionListController oneEmotionC;
   final ImagePicker picker = ImagePicker();
   XFile? image;
   Uint8List? getImage;
@@ -27,15 +25,10 @@ class OneEmotionSetupController extends GetxController {
   RxString detailId = "".obs;
   RxBool imageRequired = false.obs;
 
-  late String emotionCon;
-
   SupabaseClient client = Supabase.instance.client;
 
   @override
   void onInit() async {
-    oneEmotionC = Get.isRegistered<OneEmotionListController>()
-        ? Get.find<OneEmotionListController>()
-        : Get.put(OneEmotionListController());
     detailId.value = Get.parameters['id'] ?? '';
     if (detailId.value != "") {
       await getData(int.parse(detailId.value));
@@ -68,8 +61,11 @@ class OneEmotionSetupController extends GetxController {
   }
 
   Future getData(int id) async {
-    if (EasyLoading.isShow) return;
-    EasyLoading.show();
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
+
+    await EasyLoading.show();
     editable.value = false;
     try {
       var resGet = await client.from('one_emotion').select().match(
@@ -88,7 +84,7 @@ class OneEmotionSetupController extends GetxController {
       Helper.dialogWarning(e.toString());
     }
 
-    EasyLoading.dismiss();
+    await EasyLoading.dismiss();
   }
 
   Future submitOnPressed(bool edit) async {
@@ -131,7 +127,8 @@ class OneEmotionSetupController extends GetxController {
       var dataPost = OneemotionModel.fromDynamicList(res);
       await getData(dataPost.first.id!);
 
-      EasyLoading.dismiss();
+      await EasyLoading.dismiss();
+      Helper.dialogSuccess("Updated Successfully!");
     } else {
       try {
         var res = await client.from('one_emotion').insert(

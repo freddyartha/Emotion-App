@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:emotion_app/app/mahas/services/mahas_format.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,6 +14,7 @@ import '../../../mahas/components/inputs/input_datetime_component.dart';
 import '../../../mahas/components/inputs/input_radio_component.dart';
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/services/helper.dart';
+import '../../home/controllers/home_controller.dart';
 
 class ProfileController extends GetxController {
   final InputTextController nameCon = InputTextController();
@@ -36,12 +38,17 @@ class ProfileController extends GetxController {
   RxInt itemID = 0.obs;
   RxBool imageRequired = false.obs;
 
-  late String emotionCon;
-
   SupabaseClient client = Supabase.instance.client;
+
+  late HomeController homeC;
+
+  final box = GetStorage();
 
   @override
   void onInit() async {
+    homeC = Get.isRegistered<HomeController>()
+        ? Get.find<HomeController>()
+        : Get.put(HomeController());
     await getData();
     super.onInit();
   }
@@ -98,8 +105,11 @@ class ProfileController extends GetxController {
     if (!birthDayCon.isValid) return false;
     if (!emailCon.isValid) return false;
 
-    if (EasyLoading.isShow) return false;
-    EasyLoading.show();
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+    }
+
+    await EasyLoading.show();
 
     var res = await client.from("users").update(
       {
@@ -108,13 +118,17 @@ class ProfileController extends GetxController {
         "sex": sexCon.value ?? "",
         "birth_date": MahasFormat.dateToString(birthDayCon.value),
         "email": emailCon.value,
-        "profile_pic": await convertImage(image!),
+        "profile_pic": image != null ? await convertImage(image!) : getImage,
       },
     ).match(
       {"id": itemID},
     ).select();
     editable.value = false;
     var dataPost = Users.fromDynamicList(res);
+    await box.remove('rememberUser');
+    var usersasMap = dataPost.map((dataPost) => dataPost.userstoMap()).toList();
+    String jsonString = jsonEncode(usersasMap);
+    await box.write('rememberUser', jsonString);
     nameCon.value = dataPost.first.name;
     addressCon.value = dataPost.first.address;
     sexCon.value = dataPost.first.sex;
@@ -122,7 +136,7 @@ class ProfileController extends GetxController {
     emailCon.value = dataPost.first.email;
     getImage = stringToImage(dataPost.first.profilePic!);
     update();
-    EasyLoading.dismiss();
+    await EasyLoading.dismiss();
     Helper.dialogSuccess("Updated Successfully!");
   }
 

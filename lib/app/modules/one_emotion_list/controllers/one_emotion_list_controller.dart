@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:emotion_app/app/data/models/one_emotion_model.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../mahas/services/helper.dart';
@@ -14,6 +15,8 @@ class OneEmotionListController extends GetxController {
 
   RxBool editable = true.obs;
   RxList emotion = List<OneemotionModel>.empty().obs;
+
+  final box = GetStorage();
 
   @override
   void onInit() async {
@@ -53,7 +56,11 @@ class OneEmotionListController extends GetxController {
           .order("created_at");
       List<OneemotionModel> datas = OneemotionModel.fromDynamicList(response);
       emotion.assignAll(datas);
-      emotion.refresh();
+      await box.remove('rememberEmotion');
+      var emotionasMap =
+          emotion.map((dataGet) => dataGet.oneEmotiontoMap()).toList();
+      String jsonString = jsonEncode(emotionasMap);
+      await box.write('rememberEmotion', jsonString);
     } on PostgrestException catch (e) {
       Helper.dialogWarning(
         e.toString(),

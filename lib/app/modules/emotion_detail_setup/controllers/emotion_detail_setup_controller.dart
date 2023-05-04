@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,6 +18,7 @@ import '../../../data/models/emotions_model.dart';
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/mahas_colors.dart';
 import '../../../mahas/services/helper.dart';
+import '../../home/controllers/home_controller.dart';
 
 class EmotionDetailSetupController extends GetxController {
   final InputTextController titleCon = InputTextController();
@@ -43,8 +45,15 @@ class EmotionDetailSetupController extends GetxController {
 
   SupabaseClient client = Supabase.instance.client;
 
+  late HomeController homeC;
+
+  final box = GetStorage();
+
   @override
   void onInit() async {
+    homeC = Get.isRegistered<HomeController>()
+        ? Get.find<HomeController>()
+        : Get.put(HomeController());
     emotionCon = Get.parameters['emotion']!;
     var e = Get.parameters['itemId'];
     if (e != null) {
@@ -269,6 +278,8 @@ class EmotionDetailSetupController extends GetxController {
           "id": itemId.toString(),
         },
       ).order("date_created");
+      await box.remove('rememberEmotionsList');
+      await homeC.getEmotionsList();
       emotions(EmotionsModel.fromJsonList(response));
       emotions.refresh();
       titleCon.value = emotions.first.emotionTitle!;
@@ -300,7 +311,7 @@ class EmotionDetailSetupController extends GetxController {
     if (!descCon.isValid) return false;
 
     if (EasyLoading.isShow) return false;
-    EasyLoading.show();
+    await EasyLoading.show();
 
     if (edit == true) {
       try {
@@ -379,7 +390,7 @@ class EmotionDetailSetupController extends GetxController {
         Helper.dialogWarning(e.toString());
       }
     }
-    EasyLoading.dismiss();
+    await EasyLoading.dismiss();
   }
 
   Future<void> deleteOnPressed(int id) async {

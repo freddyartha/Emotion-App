@@ -111,7 +111,8 @@ class ExecutantSetupController extends GetxController {
       var dataPost = ExecutantModel.fromDynamicList(res);
       await getData(dataPost.first.id!);
 
-      EasyLoading.dismiss();
+      await EasyLoading.dismiss();
+      Helper.dialogSuccess("Updated Successfully!");
     } else {
       try {
         var res = await client.from('executant').insert(
@@ -132,7 +133,7 @@ class ExecutantSetupController extends GetxController {
         Helper.dialogWarning(e.toString());
       }
 
-      EasyLoading.dismiss();
+      await EasyLoading.dismiss();
       Helper.dialogSuccess("Created Successfully!");
     }
   }
