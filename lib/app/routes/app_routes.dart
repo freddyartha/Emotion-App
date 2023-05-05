@@ -16,7 +16,6 @@ abstract class Routes {
   static const ONE_EMOTION_LIST = _Paths.ONE_EMOTION_LIST;
   static const ONE_EMOTION_SETUP = _Paths.ONE_EMOTION_SETUP;
   static const PROFILE = _Paths.PROFILE;
-  static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
 }
 
 abstract class _Paths {
@@ -32,5 +31,4 @@ abstract class _Paths {
   static const ONE_EMOTION_LIST = '/one-emotion-list';
   static const ONE_EMOTION_SETUP = '/one-emotion-setup';
   static const PROFILE = '/profile';
-  static const SPLASH_SCREEN = '/splash-screen';
 }
