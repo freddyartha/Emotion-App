@@ -24,13 +24,12 @@ class SignInView extends GetView<SignInController> {
                   child: Container(),
                 ),
                 const SizedBox(
-                  width: 150,
-                  child: Icon(
-                    Icons.person_pin,
-                    size: 100,
+                  width: 130,
+                  child: Image(
+                    image: AssetImage("assets/images/logo.png"),
                   ),
                 ),
-                const Padding(padding: EdgeInsets.all(5)),
+                const Padding(padding: EdgeInsets.all(2)),
                 Text(
                   "EMOTION APP",
                   style: MahasThemes.blackH1,

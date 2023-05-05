@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.emotion_app">
    <application
-        android:label="emotion_app"
+        android:label="Emotion App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

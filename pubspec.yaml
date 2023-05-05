@@ -2,10 +2,10 @@ name: emotion_app
 version: 1.0.0+1
 publish_to: none
 description: A new Flutter project.
-environment: 
-  sdk: '>=2.19.2 <3.0.0'
+environment:
+  sdk: ">=2.19.2 <3.0.0"
 
-dependencies: 
+dependencies:
   cupertino_icons: ^1.0.2
   get: 4.6.5
   fl_chart: 0.60.0
@@ -20,16 +20,30 @@ dependencies:
   get_storage: 2.0.3
   image_picker: 0.8.6+4
   url_launcher: 6.1.10
-  flutter: 
+  flutter:
     sdk: flutter
+  flutter_native_splash: ^2.2.19
 
-dev_dependencies: 
+dev_dependencies:
   flutter_lints: ^2.0.0
-  flutter_test: 
+  flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
 
-flutter: 
-  assets: 
+flutter_launcher_icons:
+  image_path: "assets/images/logo.png"
+  android: true
+  ios: true
+
+flutter_native_splash:
+  color: "#43A047"
+  image: assets/images/logo.png
+
+  android_12:
+    image: assets/images/logo.png
+    icon_background_color: "#43A047"
+
+flutter:
+  assets:
     - assets/images/
   uses-material-design: true
-

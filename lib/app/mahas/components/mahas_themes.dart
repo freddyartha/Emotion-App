@@ -34,7 +34,7 @@ class MahasThemes {
 
   static TextStyle blackH1 = const TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w900,
     color: MahasColors.dark,
   );
   static TextStyle whiteH1 = const TextStyle(
