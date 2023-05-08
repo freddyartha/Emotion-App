@@ -279,7 +279,7 @@ class EmotionDetailSetupController extends GetxController {
         },
       ).order("date_created");
       await box.remove('rememberEmotionsList');
-      await homeC.getEmotionsList();
+      await homeC.getEmotionsList("All");
       emotions(EmotionsModel.fromJsonList(response));
       emotions.refresh();
       titleCon.value = emotions.first.emotionTitle!;

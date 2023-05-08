@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:emotion_app/app/data/models/one_emotion_model.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/models/emotions_chart_model.dart';
@@ -22,10 +22,29 @@ class HomeController extends GetxController {
   RxList<Map<String, dynamic>> emotionCount = <Map<String, dynamic>>[].obs;
   RxList<EmotionsChartModel> emotions = <EmotionsChartModel>[].obs;
   RxBool loadData = false.obs;
+  RxString selectDate = DateTime.now().toString().obs;
+  RxString selectedFilter = "".obs;
+  final String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  final List chartFilter = [
+    "All",
+    "Today",
+    "This Week",
+    "This Month",
+    "This Year",
+  ];
 
   Uint8List? getImage;
 
   final box = GetStorage();
+
+  @override
+  void onInit() async {
+    selectedFilter.value = chartFilter.first;
+    selectDate.value = DateFormat('yyyy-MM-dd')
+        .format(DateTime.now().subtract(const Duration(days: 30)));
+    await getUser();
+    super.onInit();
+  }
 
   void toProfile() {
     Get.toNamed(Routes.PROFILE)?.then((value) async => await getUser());
@@ -38,7 +57,6 @@ class HomeController extends GetxController {
   }
 
   Future<void> onRefresh() async {
-    loadData.value = false;
     await getUser();
   }
 
@@ -52,10 +70,7 @@ class HomeController extends GetxController {
   }
 
   Future getUser() async {
-    if (EasyLoading.isShow) {
-      EasyLoading.dismiss();
-    }
-    await EasyLoading.show();
+    loadData.value = true;
 
     var readUser = await box.read("rememberUser");
     if (readUser != null) {
@@ -88,16 +103,10 @@ class HomeController extends GetxController {
         ? stringToImage(users.first.profilePic!)
         : null;
     await getOneEmotion();
-    await EasyLoading.dismiss();
     return users;
   }
 
   Future getOneEmotion() async {
-    if (EasyLoading.isShow) {
-      EasyLoading.dismiss();
-    }
-    await EasyLoading.show();
-
     var readEmotion = await box.read("rememberEmotion");
     if (readEmotion != null) {
       List<dynamic> decode = json.decode(readEmotion);
@@ -127,25 +136,13 @@ class HomeController extends GetxController {
         );
       }
     }
-    await getEmotionsList();
-    await EasyLoading.dismiss();
+    await getEmotionsList("All");
     return listEmotion;
   }
 
-  Future getEmotionsList() async {
-    if (EasyLoading.isShow) {
-      EasyLoading.dismiss();
-    }
-    await EasyLoading.show();
-
-    var readEmotionsList = await box.read("rememberEmotionsList");
-    if (readEmotionsList != null) {
-      List<dynamic> decode = json.decode(readEmotionsList);
-      List<EmotionsChartModel> readDatas =
-          EmotionsChartModel.fromJsonList(decode);
-      emotions.assignAll(readDatas);
-    } else {
-      try {
+  Future getEmotionsList(String? selectDate) async {
+    try {
+      if (selectDate == "All") {
         var response = await client
             .from("emotions_list")
             .select('emotion_title, one_emotion(id, description, image))')
@@ -158,21 +155,33 @@ class HomeController extends GetxController {
         List<EmotionsChartModel> readDatas =
             EmotionsChartModel.fromJsonList(response);
         emotions.assignAll(readDatas);
-      } on PostgrestException catch (e) {
-        Helper.dialogWarning(
-          e.toString(),
-        );
-      } catch (e) {
-        Helper.dialogWarning(
-          e.toString(),
-        );
+      } else {
+        var response = await client
+            .from("emotions_list")
+            .select('emotion_title, one_emotion(id, description, image))')
+            .match(
+              {
+                "user_uid": client.auth.currentUser!.id,
+              },
+            )
+            .gte('date_created', selectDate!)
+            .lte('date_created', today)
+            .order("date_created");
+
+        List<EmotionsChartModel> readDatas =
+            EmotionsChartModel.fromJsonList(response);
+        emotions.assignAll(readDatas);
       }
+    } on PostgrestException catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    } catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
     }
 
-    var emotionsListasMap =
-        emotions.map((emotions) => emotions.emotionsListtoMap()).toList();
-    String jsonString = jsonEncode(emotionsListasMap);
-    await box.write('rememberEmotionsList', jsonString);
     pieChartCon.clear();
     emotionCount.clear();
     for (var e in emotions) {
@@ -208,8 +217,27 @@ class HomeController extends GetxController {
         index = 0;
       }
     }
-    loadData.value = true;
-    await EasyLoading.dismiss();
+    loadData.value = false;
+    update();
+  }
+
+  String selectedDateValue(String selectedDate) {
+    RxString data = "".obs;
+    if (selectedDate == "Today") {
+      data.value = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    } else if (selectedDate == "This Week") {
+      data.value = DateFormat('yyyy-MM-dd')
+          .format(DateTime.now().subtract(const Duration(days: 6)));
+    } else if (selectedDate == "This Month") {
+      data.value = DateFormat('yyyy-MM-dd')
+          .format(DateTime(DateTime.now().year, DateTime.now().month, 1));
+    } else if (selectedDate == "This Year") {
+      data.value =
+          DateFormat('yyyy-MM-dd').format(DateTime(DateTime.now().year, 1, 1));
+    } else {
+      data.value = "All";
+    }
+    return data.value;
   }
 
   Uint8List stringToImage(String imageValue) {
