@@ -288,6 +288,7 @@ class HomeView extends GetView<HomeController> {
                                   );
                                 }).toList(),
                                 onChanged: (value) async {
+                                  controller.loadData.value = true;
                                   controller.selectedFilter.value =
                                       value.toString();
                                   String selectDate =
