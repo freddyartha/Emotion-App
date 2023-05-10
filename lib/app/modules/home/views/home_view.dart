@@ -153,6 +153,7 @@ class HomeView extends GetView<HomeController> {
                                   thumbVisibility: true,
                                   radius: const Radius.circular(10),
                                   child: ListView.separated(
+                                    physics: const ScrollPhysics(),
                                     shrinkWrap: true,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder: (context, index) {
@@ -333,6 +334,7 @@ class HomeView extends GetView<HomeController> {
                                   ? controller.emotionCount.isEmpty
                                       ? const EmptyComponent()
                                       : ListView.separated(
+                                          physics: const ScrollPhysics(),
                                           itemBuilder: (context, index) =>
                                               ListTile(
                                             contentPadding:
@@ -370,9 +372,7 @@ class HomeView extends GetView<HomeController> {
                                           itemCount:
                                               controller.emotionCount.length,
                                         )
-                                  : const ShimmerComponent(
-                                      count: 3,
-                                    ),
+                                  : const ShimmerComponent(),
                             ),
                           ),
                         ],

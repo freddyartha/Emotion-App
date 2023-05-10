@@ -35,8 +35,8 @@ class ProfileController extends GetxController {
   Uint8List? getImage;
 
   RxBool editable = true.obs;
+  RxBool tapImage = false.obs;
   RxInt itemID = 0.obs;
-  RxBool imageRequired = false.obs;
 
   SupabaseClient client = Supabase.instance.client;
 
@@ -134,7 +134,9 @@ class ProfileController extends GetxController {
     sexCon.value = dataPost.first.sex;
     birthDayCon.value = dataPost.first.birthDate;
     emailCon.value = dataPost.first.email;
-    getImage = stringToImage(dataPost.first.profilePic!);
+    getImage = dataPost.first.profilePic != null
+        ? stringToImage(dataPost.first.profilePic!)
+        : null;
     update();
     await EasyLoading.dismiss();
     Helper.dialogSuccess("Updated Successfully!");
@@ -153,6 +155,14 @@ class ProfileController extends GetxController {
   void clearImage() {
     if (image != null) {
       image = null;
+      if (getImage != null) {
+        getImage = null;
+      }
+    } else if (getImage != null) {
+      getImage = null;
+      if (image != null) {
+        image = null;
+      }
     }
     update();
   }

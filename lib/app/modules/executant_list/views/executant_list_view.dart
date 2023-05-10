@@ -73,16 +73,13 @@ class ExecutantListView extends GetView<ExecutantListController> {
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 10),
                             leading: executant.image == null
-                                ? SizedBox(
+                                ? const SizedBox(
                                     width: 50,
                                     height: 50,
                                     child: ClipOval(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(5),
-                                        child: const Icon(
-                                          FontAwesomeIcons.faceSmile,
-                                          size: 30,
-                                        ),
+                                      child: Icon(
+                                        FontAwesomeIcons.faceSmile,
+                                        size: 40,
                                       ),
                                     ),
                                   )
@@ -90,13 +87,10 @@ class ExecutantListView extends GetView<ExecutantListController> {
                                     width: 50,
                                     height: 50,
                                     child: ClipOval(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(5),
-                                        child: Image.memory(
-                                          controller
-                                              .convertImage(executant.image!),
-                                          fit: BoxFit.cover,
-                                        ),
+                                      child: Image.memory(
+                                        controller
+                                            .convertImage(executant.image!),
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),

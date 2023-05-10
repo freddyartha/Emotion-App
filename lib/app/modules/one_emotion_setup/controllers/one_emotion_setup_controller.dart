@@ -24,6 +24,7 @@ class OneEmotionSetupController extends GetxController {
   RxBool isEdit = false.obs;
   RxString detailId = "".obs;
   RxBool imageRequired = false.obs;
+  RxBool tapImage = false.obs;
 
   SupabaseClient client = Supabase.instance.client;
 
@@ -199,6 +200,14 @@ class OneEmotionSetupController extends GetxController {
   void clearImage() {
     if (image != null) {
       image = null;
+      if (getImage != null) {
+        getImage = null;
+      }
+    } else if (getImage != null) {
+      getImage = null;
+      if (image != null) {
+        image = null;
+      }
     }
     update();
   }

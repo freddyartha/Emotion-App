@@ -39,6 +39,7 @@ class EmotionDetailSetupController extends GetxController {
   RxInt qty = 0.obs;
   RxInt itemId = 0.obs;
   RxString isAdd = "".obs;
+  RxBool tapImage = false.obs;
 
   late String emotionCon;
   late int emotionId;
@@ -432,9 +433,14 @@ class EmotionDetailSetupController extends GetxController {
   void clearImage() {
     if (image != null) {
       image = null;
-    }
-    if (getImage != null) {
+      if (getImage != null) {
+        getImage = null;
+      }
+    } else if (getImage != null) {
       getImage = null;
+      if (image != null) {
+        image = null;
+      }
     }
     update();
   }

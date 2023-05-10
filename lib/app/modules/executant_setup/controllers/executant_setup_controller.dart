@@ -24,6 +24,7 @@ class ExecutantSetupController extends GetxController {
   RxInt itemID = 0.obs;
   RxBool isEdit = false.obs;
   RxString detailId = "".obs;
+  RxBool tapImage = false.obs;
 
   late String emotionCon;
 
@@ -75,7 +76,7 @@ class ExecutantSetupController extends GetxController {
       var dataGet = ExecutantModel.fromDynamicList(resGet);
       descCon.value = dataGet.first.description;
       nameCon.value = dataGet.first.name;
-      if (getImage != null) {
+      if (dataGet.first.image != null) {
         getImage = stringToImage(dataGet.first.image!);
       }
       update();
@@ -109,7 +110,11 @@ class ExecutantSetupController extends GetxController {
       editable.value = false;
       isEdit.value = false;
       var dataPost = ExecutantModel.fromDynamicList(res);
-      await getData(dataPost.first.id!);
+      descCon.value = dataPost.first.description;
+      nameCon.value = dataPost.first.name;
+      if (dataPost.first.image != null) {
+        getImage = stringToImage(dataPost.first.image!);
+      }
 
       await EasyLoading.dismiss();
       Helper.dialogSuccess("Updated Successfully!");
@@ -126,7 +131,11 @@ class ExecutantSetupController extends GetxController {
         ).select();
         editable.value = false;
         var dataPost = ExecutantModel.fromDynamicList(res);
-        await getData(dataPost.first.id!);
+        descCon.value = dataPost.first.description;
+        nameCon.value = dataPost.first.name;
+        if (dataPost.first.image != null) {
+          getImage = stringToImage(dataPost.first.image!);
+        }
       } on PostgrestException catch (e) {
         Helper.dialogWarning(e.toString());
       } catch (e) {
@@ -177,9 +186,14 @@ class ExecutantSetupController extends GetxController {
   void clearImage() {
     if (image != null) {
       image = null;
-    }
-    if (getImage != null) {
+      if (getImage != null) {
+        getImage = null;
+      }
+    } else if (getImage != null) {
       getImage = null;
+      if (image != null) {
+        image = null;
+      }
     }
     update();
   }
