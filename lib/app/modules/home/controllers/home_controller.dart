@@ -73,8 +73,8 @@ class HomeController extends GetxController {
     loadData.value = true;
 
     var readUser = await box.read("rememberUser");
-    if (readUser != null) {
-      List<dynamic> decode = json.decode(readUser);
+    List<dynamic> decode = json.decode(readUser ?? "[]");
+    if (decode.isNotEmpty) {
       List<Users> readDatas = Users.fromDynamicList(decode);
       users.assignAll(readDatas);
     } else {
@@ -108,8 +108,8 @@ class HomeController extends GetxController {
 
   Future getOneEmotion() async {
     var readEmotion = await box.read("rememberEmotion");
-    if (readEmotion != null) {
-      List<dynamic> decode = json.decode(readEmotion);
+    List<dynamic> decode = json.decode(readEmotion ?? "[]");
+    if (decode.isNotEmpty) {
       List<OneemotionModel> readDatas = OneemotionModel.fromDynamicList(decode);
       listEmotion.assignAll(readDatas);
     } else {

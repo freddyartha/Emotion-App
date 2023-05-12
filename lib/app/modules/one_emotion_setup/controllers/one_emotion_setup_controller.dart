@@ -5,12 +5,14 @@ import 'dart:typed_data';
 import 'package:emotion_app/app/data/models/one_emotion_model.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../mahas/components/inputs/input_text_component.dart';
 import '../../../mahas/services/helper.dart';
+import '../../home/controllers/home_controller.dart';
 
 class OneEmotionSetupController extends GetxController {
   final InputTextController descCon = InputTextController();
@@ -26,10 +28,17 @@ class OneEmotionSetupController extends GetxController {
   RxBool imageRequired = false.obs;
   RxBool tapImage = false.obs;
 
+  final box = GetStorage();
+
+  late HomeController homeC;
+
   SupabaseClient client = Supabase.instance.client;
 
   @override
   void onInit() async {
+    homeC = Get.isRegistered<HomeController>()
+        ? Get.find<HomeController>()
+        : Get.put(HomeController());
     detailId.value = Get.parameters['id'] ?? '';
     if (detailId.value != "") {
       await getData(int.parse(detailId.value));
@@ -126,7 +135,10 @@ class OneEmotionSetupController extends GetxController {
       editable.value = false;
       isEdit.value = false;
       var dataPost = OneemotionModel.fromDynamicList(res);
-      await getData(dataPost.first.id!);
+      descCon.value = dataPost.first.description;
+      getImage = stringToImage(dataPost.first.image!);
+      await box.remove('rememberEmotion');
+      await homeC.getOneEmotion();
 
       await EasyLoading.dismiss();
       Helper.dialogSuccess("Updated Successfully!");
@@ -142,7 +154,10 @@ class OneEmotionSetupController extends GetxController {
         ).select();
         editable.value = false;
         var dataPost = OneemotionModel.fromDynamicList(res);
-        await getData(dataPost.first.id!);
+        descCon.value = dataPost.first.description;
+        getImage = stringToImage(dataPost.first.image!);
+        await box.remove('rememberEmotion');
+        await homeC.getOneEmotion();
       } on PostgrestException catch (e) {
         Helper.dialogWarning(e.toString());
       } catch (e) {
@@ -150,7 +165,7 @@ class OneEmotionSetupController extends GetxController {
       }
 
       imageRequired.value = false;
-      EasyLoading.dismiss();
+      await EasyLoading.dismiss();
       Helper.dialogSuccess("Created Successfully!");
     }
   }
