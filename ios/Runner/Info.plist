@@ -47,7 +47,7 @@
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
-		//image picker
+		<!-- image picker -->
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This app require permission for accessing gallery</string>
 		<key>NSCameraUsageDescription</key>
