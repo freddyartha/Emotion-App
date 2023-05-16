@@ -74,6 +74,7 @@ class Helper {
     String? textCancel,
     Color? color,
     required Function() confirmAction,
+    Function()? backAction,
   }) async {
     return await Get.dialog<bool?>(
       AlertDialog(
@@ -104,19 +105,18 @@ class Helper {
             child: Text(
               textCancel ?? "Close",
               style: const TextStyle(
-                color: MahasColors.dark,
-              ),
+                  color: MahasColors.dark, fontWeight: FontWeight.bold),
             ),
             onPressed: () {
-              Get.back(result: false);
+              backAction!() ?? Get.back(result: false);
             },
           ),
           TextButton(
             child: Text(
               textConfirm ?? "OK",
               style: TextStyle(
-                color: color ?? MahasColors.primary,
-              ),
+                  color: color ?? MahasColors.primary,
+                  fontWeight: FontWeight.bold),
             ),
             onPressed: () {
               confirmAction();

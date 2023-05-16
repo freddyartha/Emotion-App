@@ -23,6 +23,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_native_splash: ^2.2.19
+  package_info_plus: ^4.0.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0

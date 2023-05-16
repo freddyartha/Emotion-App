@@ -103,7 +103,7 @@ class SignInView extends GetView<SignInController> {
                   child: Container(),
                 ),
                 Obx(
-                  () => Text(controller.version.value),
+                  () => Text("v ${controller.version.value}"),
                 ),
               ],
             ),

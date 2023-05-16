@@ -1,6 +1,7 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../mahas/components/inputs/input_text_component.dart';
@@ -8,7 +9,7 @@ import '../../../mahas/services/helper.dart';
 import '../../../routes/app_pages.dart';
 
 class SignInController extends GetxController {
-  final RxString version = "1.0.0".obs;
+  RxString version = "".obs;
   final RxBool isRemember = false.obs;
 
   final InputTextController emailCon =
@@ -22,6 +23,8 @@ class SignInController extends GetxController {
 
   @override
   void onInit() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    version.value = packageInfo.version;
     var read = await box.read("rememberme");
     if (read != null) {
       emailCon.value = read["email"];

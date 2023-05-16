@@ -1,16 +1,22 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:io' show Platform;
 
 import 'package:emotion_app/app/data/models/one_emotion_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/models/emotions_chart_model.dart';
 import '../../../data/models/users_model.dart';
+import '../../../data/models/versions_model.dart';
 import '../../../mahas/components/chart/pie_chart_component.dart';
 import '../../../mahas/mahas_colors.dart';
 import '../../../mahas/services/helper.dart';
+import '../../../mahas/services/mahas_format.dart';
 import '../../../routes/app_pages.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -19,11 +25,13 @@ class HomeController extends GetxController {
   RxList<Users> users = <Users>[].obs;
   RxList<OneemotionModel> listEmotion = <OneemotionModel>[].obs;
   RxList<PieChartItem> pieChartCon = <PieChartItem>[].obs;
+  RxList<VersionsModel> versions = <VersionsModel>[].obs;
   RxList<Map<String, dynamic>> emotionCount = <Map<String, dynamic>>[].obs;
   RxList<EmotionsChartModel> emotions = <EmotionsChartModel>[].obs;
   RxBool loadData = false.obs;
   RxString selectDate = DateTime.now().toString().obs;
   RxString selectedFilter = "".obs;
+  RxString version = "".obs;
   final String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
   final List chartFilter = [
     "All",
@@ -43,7 +51,16 @@ class HomeController extends GetxController {
     selectDate.value = DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(const Duration(days: 30)));
     await getUser();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    version.value = packageInfo.version;
+
     super.onInit();
+  }
+
+  @override
+  void onReady() async {
+    await getVersion();
+    super.onReady();
   }
 
   void toProfile() {
@@ -104,6 +121,101 @@ class HomeController extends GetxController {
         : null;
     await getOneEmotion();
     return users;
+  }
+
+  Future getVersion() async {
+    try {
+      var response = await client.from("versions").select();
+      List<VersionsModel> datas = VersionsModel.fromJsonList(response);
+      versions.assignAll(datas);
+      var readTempo = await box.read("updateTempo");
+      if (readTempo != null) {
+        DateTime time = MahasFormat.stringToDateTime(readTempo)!;
+        if (DateTime.now().isAfter(time)) {
+          if (Platform.isIOS) {
+            if (versions.first.iosVersion != version.value) {
+              Helper.dialogQuestionWithAction(
+                message:
+                    "Your App version is outdated!\nplease update to version ${versions.first.iosVersion}",
+                icon: FontAwesomeIcons.bell,
+                textCancel: "Maybe later",
+                confirmAction: () {
+                  linkOnPressed(versions.first.linkAppstore!);
+                },
+                backAction: () async {
+                  await box.remove("updateTempo");
+                  await box.write("updateTempo",
+                      DateTime.now().add(const Duration(days: 31)).toString());
+                  Get.back(result: false);
+                },
+              );
+            }
+          } else {
+            if (versions.first.androidVersion != version.value) {
+              Helper.dialogQuestionWithAction(
+                message:
+                    "Your App version is outdated!\nplease update to version ${versions.first.androidVersion}",
+                icon: FontAwesomeIcons.bell,
+                textCancel: "Maybe later",
+                confirmAction: () {
+                  linkOnPressed(versions.first.linkPlaystore!);
+                },
+                backAction: () async {
+                  await box.remove("updateTempo");
+                  await box.write("updateTempo",
+                      DateTime.now().add(const Duration(days: 31)).toString());
+                  Get.back(result: false);
+                },
+              );
+            }
+          }
+        }
+      } else {
+        if (Platform.isIOS) {
+          if (versions.first.iosVersion != version.value) {
+            Helper.dialogQuestionWithAction(
+              message:
+                  "Your App version is outdated!\nplease update to version ${versions.first.iosVersion}",
+              icon: FontAwesomeIcons.bell,
+              textCancel: "Maybe later",
+              confirmAction: () {
+                linkOnPressed(versions.first.linkAppstore!);
+              },
+              backAction: () async {
+                await box.write("updateTempo",
+                    DateTime.now().add(const Duration(days: 31)).toString());
+                Get.back(result: false);
+              },
+            );
+          }
+        } else {
+          if (versions.first.androidVersion != version.value) {
+            Helper.dialogQuestionWithAction(
+              message:
+                  "Your App version is outdated!\nplease update to version ${versions.first.androidVersion}",
+              icon: FontAwesomeIcons.bell,
+              textCancel: "Maybe later",
+              confirmAction: () {
+                linkOnPressed(versions.first.linkPlaystore!);
+              },
+              backAction: () async {
+                await box.write("updateTempo",
+                    DateTime.now().add(const Duration(days: 31)).toString());
+                Get.back(result: false);
+              },
+            );
+          }
+        }
+      }
+    } on PostgrestException catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    } catch (e) {
+      Helper.dialogWarning(
+        e.toString(),
+      );
+    }
   }
 
   Future getOneEmotion() async {
@@ -244,5 +356,12 @@ class HomeController extends GetxController {
     List<int> byte = jsonDecode(imageValue).cast<int>();
     Uint8List ul = Uint8List.fromList(byte);
     return ul;
+  }
+
+  Future<void> linkOnPressed(String urlData) async {
+    Uri url = Uri.parse(urlData);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
